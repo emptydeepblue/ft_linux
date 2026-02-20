@@ -14,8 +14,8 @@ A minimal but functional Linux distribution built from scratch, including:
 
 ## System Specifications
 
-- **Kernel Version**: Linux 4.x-<student_login>
-- **Hostname**: <student_login>
+- **Kernel Version**: Linux 4.x-everonel
+- **Hostname**: everonel
 - **Architecture**: 64-bit (or 32-bit as chosen)
 - **Init System**: SysVinit (or SystemD)
 - **Bootloader**: GRUB
