@@ -1,0 +1,13 @@
+# ft_linux Disk Image Checksum
+# Generated with: shasum < disk.vdi > checksum.txt
+# or: md5sum disk.vdi > checksum.txt
+#
+# Replace this placeholder with actual checksum after building your system
+# Example command:
+#   shasum < ft_linux.vdi > checksum.txt
+#
+# The actual checksum will appear here once you generate it from your VM disk image
+# Format: <checksum_hash>  -
+#
+# Placeholder - replace with actual checksum:
+# xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  -
