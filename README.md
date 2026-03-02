@@ -50,8 +50,10 @@ ft_linux/
 
 ### Prerequisites
 - VirtualBox or VMWare
-- Linux host system or build environment
-- Internet connection for downloading sources
+- **CPU**: AMD/Intel x86 (32-bit) or x86_64 (64-bit) 4 cores or more
+- **RAM**: 8 GB or more
+- **OS and tools**: must validate the `./version-check.sh` script to ensure compatibility
+- **Disk Space**: At least 30 GB for the LFS build environment
 
 ### Steps
 
@@ -91,6 +93,8 @@ Common issues and solutions are documented in [build_notes/issues.md](build_note
 ## Resources
 
 - [Linux From Scratch (LFS)](http://www.linuxfromscratch.org/)
+- [Software Building HOWTO](https://tldp.org/HOWTO/Software-Building-HOWTO.html)
+- [Installing from Source](https://moi.vonos.net/linux/beginners-installing-from-source/)
 - [Kernel.org](https://www.kernel.org/)
 - [Filesystem Hierarchy Standard](https://refspecs.linuxfoundation.org/fhs.shtml)
 

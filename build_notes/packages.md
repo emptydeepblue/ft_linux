@@ -10,7 +10,7 @@ Most packages are compiled from source following the Linux From Scratch (LFS) me
 
 ## Build Order
 
-Packages must be installed in a specific order due to dependencies. Follow the LFS book for exact build order.
+Packages must be installed in a specific order due to dependencies.
 
 ## Mandatory Packages List
 

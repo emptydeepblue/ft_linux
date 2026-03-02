@@ -1,241 +1,152 @@
-# Virtual Machine Configuration
+# LFS VM Setup
+This document provides instructions for setting up a virtual machine (VM) for Linux From Scratch (LFS) development. The VM will be configured with the necessary tools and environment to facilitate the LFS build process.
 
-## Overview
+--- 
+*Table of Contents*  
+[Prerequisites](#prerequisites)  
+[Step 1: Create a New Virtual Machine](#step-1-create-a-new-virtual-machine)  
+[Step 2: Install the Operating System](#step-2-install-the-operating-system)  
+[Step 3: Configure the VM for LFS Development](#step-3-configure-the-vm-for-lfs-development)  
+[Step 4: Prepare the LFS build environment](#step-4-prepare-the-lfs-build-environment)  
+[Step 5: Download LFS sources](#step-5-download-lfs-sources)  
+[Step 6: Finalize the setup](#step-6-finalize-the-setup)  
 
-This document describes the virtual machine setup for ft_linux.
+## Prerequisites
+- A virtualization software (e.g., VirtualBox, VMware)
+- An ISO image of a Linux distribution (e.g., Ubuntu, Debian) to install as the host operating system
+- Sufficient hardware resources (4 CPU cores, 8 GB RAM, 60 GB disk space) to run the VM smoothly  
 
-## VM Software
+## Step 1: Create a New Virtual Machine
+> ⚠️ Remember to deactivate the `Skip unattended installation` or similar options, as we need to perform a manual partitioning of the operating system.
+1. Open your virtualization software and create a new virtual machine.
+2. Choose a name for your VM (e.g., "LFS Build Environment").
+3. Select the type and version of the operating system you will be installing (e.g., Linux, Ubuntu server).
+4. Allocate at least 4 CPU cores and 8 GB of RAM to the VM.
+5. Create a virtual hard disk with at least 60 GB of storage.
+6. Attach the ISO image of the Linux distribution to the VM's virtual CD/DVD drive.
 
-Recommended options:
-- **VirtualBox** (free, cross-platform)
-- **VMWare Workstation/Fusion** (paid, good performance)
-- **QEMU/KVM** (advanced, good for Linux hosts)
+## Step 2: Install the Operating System
+1. Start the VM and follow the on-screen instructions to install the operating system.
+2. During the installation process
+    - choose manual partitioning to create the necessary partitions for the LFS build environment. A recommended partition scheme is:
+        - `/boot` partition: 1 GB
+        - `swap` partition: 2 GB
+        - `/` (root) partition: ~57 GB
+    - set your intra username as VM hostname and create a user account for LFS development (e.g., "lfsuser").
+3. Complete the installation and reboot the VM.
+4. In VM settings, select the newly created VM and configure the network settings to use a NAT.
 
-## System Requirements
+## Step 3: Configure the VM for LFS Development
+2. Update the package manager and install necessary development tools: 
+    ```bash
+    sudo apt update
+    sudo apt install -y git openssh-server
+    ```
+   > ⚠️ If the package manager is not working due to DNS issues, refer to the [DNS issues on host distribution](issues.md#1-dns-issues-on-host-distribution-ubuntu-server-2204) troubleshooting steps.
+3. Configure git ssh keys for accessing the LFS repository (if needed):
+    ```bash
+    ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+    ```
+4. Check the services status:
+    ```bash
+    sudo systemctl status git
+    sudo systemctl status ssh
+    ```
+## Step 4: Prepare the LFS build environment
+1. Create the LFS directory and set environment variables:
+    ```bash
+    export LFS=/mnt/lfs
+    sudo mkdir -pv $LFS
+    sudo mkdir -pv $LFS/tools
+    sudo mkdir -pv $LFS/sources
+    sudo chmod -v a+wt $LFS/sources # Make sources directory writable for all users
+    ```
+2. Optional: If already using separate partitions for LFS (recommended for final system), mount them (adjust device names as needed):
+    ```bash
+    sudo mount -v -t ext4 /dev/sdb1 $LFS
+    sudo mount -v -t ext4 /dev/sdb2 $LFS/boot
+    sudo /sbin/swapon -v /dev/sdb3
+    ```
+    > ⚠️ It is recommended to use separate partitions for the LFS build environment. If you didn't set up separate partitions, you can add a second virtual disk later and mount it to `/mnt/lfs`.
+3. Create the LFS user and set ownership:
+    ```bash
+    sudo groupadd lfs
+    sudo useradd -s /bin/bash -g lfs -m -k /dev/null lfs
+    sudo passwd lfs
+    sudo chown -v lfs $LFS/tools    # Set ownership of tools directory to LFS user
+    sudo chown -v lfs $LFS/sources  # Set ownership of sources directory to LFS user
+    ```
+4. Switch to the LFS user and set up the build environment:
+    ```bash
+    su - lfs
+    ```
+5. Set up the `lfs` user's .bash_profile   
+    🔍 **Explanation of the .bash_profile content:**
+    - The `exec env -i` command starts a new shell with a clean environment, ensuring that no inherited environment variables from the host system interfere with the LFS build process.
+    - The `HOME=$HOME` variable ensures that the HOME environment variable is set correctly for the LFS user, allowing access to the user's home directory and configuration files.
+    - The `TERM=$TERM` variable preserves the terminal type, which is important for proper display and functionality of the terminal during the build process.
+    - The `PS1='\u:\w\$ '` sets a simple prompt that shows the username and current working directory, which can be helpful for keeping track of where you are in the filesystem during the build process.
+    ```bash
+    cat > ~/.bash_profile << "EOF"
+    >exec env -i HOME=$HOME TERM=$TERM PS1='\u:\w\$ ' /bin/bash
+    >EOF
+    ```
+6. Set up the `lfs` user's .bashrc with the necessary environment variables for the LFS build:
+    🔍 **Explanation of the environment variables:**
+    - The `set +h` command disables bash's hash function, which can cause issues during the LFS build process when new tools are created and need to be found in the PATH.  
+    - The `umask 022` command sets the default permissions for newly created files and directories to be readable by everyone but only writable by the owner, which is important for security and proper access control during the build process.  
+    - The `LFS` variable points to the mount point of the LFS partition, which is where the LFS system will be built.  
+    - The `LC_ALL=POSIX` setting ensures that the build process uses a consistent locale, which can help avoid issues with character encoding and sorting.  
+    - The `LFS_TGT` variable defines the target triplet for cross-compilation, which is used to specify the architecture and system type for the tools being built.  
+    - By prepending `/tools/bin` to the `PATH`, we ensure that the temporary tools created during the build process are used instead of any existing tools on the host system, which is crucial for a successful LFS build.  
+    ```bash
+    cat > ~/.bashrc << "EOF"
+    >set +h
+    >umask 022
+    >LFS=/mnt/lfs
+    >LC_ALL=POSIX
+    >LFS_TGT=$(uname -m)-lfs-linux-gnu
+    >PATH=/tools/bin:/bin:/usr/bin
+    >export LFS LC_ALL LFS_TGT PATH
+    >EOF
+    ```
+7. Load the new environment variables:
+    ```bash
+    source ~/.bash_profile
+    ```
+## Step 5: Download LFS sources:
+🔍 The **wget-list** contains the URLs of all the source packages and patches needed for the LFS build like binutils (binary tools as assembler, linker, etc.), gcc (GNU Compiler Collection C, C++, etc.), glibc (GNU core C libraries), etc.  
+It was created by the LFS maintainers to simplify the process of downloading all necessary files.  
+By using wget with the `--input-file` option, you can automate the download of all required sources in one command. The `--continue` option allows you to resume downloads if they are interrupted, which is especially useful for large files or slow internet connections.
 
-### Host System
-- At least 4GB RAM (8GB recommended)
-- 20GB free disk space minimum
-- CPU with virtualization support (VT-x/AMD-V)
-- Internet connection
+1. Download the wget list and sources:
+    ```bash
+    cd $LFS/sources
+    wget http://www.linuxfromscratch.org/lfs/view/stable/wget-list
+    wget --input-file=wget-list --continue --directory-prefix=$LFS/sources 2>&1 | tee wget_errors.log
+    ```
+    > ⚠️ If some files failed to download refer to the [Package Download Failures](issues.md#2-package-download-failures) troubleshooting steps.
+2. Verify the downloaded files (optional but recommended):
+    ```bash
+    wget https://www.linuxfromscratch.org/lfs/downloads/12.4/md5sums -P $LFS/sources
+    md5sum -c md5sums 2>&1 | tee md5_verification.log
+    ```
+    > ⚠️ If any files fail the checksum verification refer to the [Package Download Failures](issues.md#2-package-download-failures) troubleshooting steps.
+3. Once all files are downloaded and verified, you can optionally remove the `wget-list`, `md5sums`, and commands outputs files to save space:
+    ```bash
+    sudo rm -f wget-list md5sums wget_errors.log md5_verification.log
+    ```
 
-### VM Specifications
+## Step 6: Finalize the setup
+1. Ensure that the LFS user has the necessary permissions to access the sources and tools directories:
+    ```bash
+    sudo chown -R lfs:lfs $LFS/sources
+    sudo chown -R lfs:lfs $LFS/tools
+    ```
+2. The LFS build environment is now set up and ready for the next steps in the LFS build process.
+> ⚠️ It is recommended to take a snapshot of the VM at this point, so you can easily revert to this clean state if needed during the LFS build process.
 
-**Recommended Settings:**
-- **RAM**: 2GB minimum (4GB recommended)
-- **CPU**: 2 cores (or more)
-- **Disk**: 20GB (dynamic or fixed)
-- **Network**: NAT or Bridged
-- **Boot Order**: Hard Disk, CD-ROM
-
-## Disk Partitioning
-
-### Partition Scheme
-
-Minimum 3 partitions required:
-
-| Partition | Mount Point | Size | Type | Filesystem |
-|-----------|-------------|------|------|------------|
-| /dev/sda1 | /boot | 500MB | Primary | ext2/ext4 |
-| /dev/sda2 | / | 18GB | Primary | ext4 |
-| /dev/sda3 | swap | 2GB | Primary | swap |
-
-### Partition Commands
-
-```bash
-# Using fdisk
-fdisk /dev/sda
-
-# Create partitions:
-# n -> new partition
-# p -> primary
-# Enter partition number and sizes
-# w -> write changes
-
-# Format partitions
-mkfs.ext4 /dev/sda1
-mkfs.ext4 /dev/sda2
-mkswap /dev/sda3
-
-# Activate swap
-swapon /dev/sda3
-```
-## VirtualBox Specific Settings
-
-### Creating the VM
-
-```bash
-# Command line creation (optional)
-VBoxManage createvm --name "ft_linux" --ostype Linux_64 --register
-
-# Set memory
-VBoxManage modifyvm "ft_linux" --memory 2048
-
-# Create disk
-VBoxManage createhd --filename "ft_linux.vdi" --size 20000
-
-# Add storage controller
-VBoxManage storagectl "ft_linux" --name "SATA Controller" --add sata
-
-# Attach disk
-VBoxManage storageattach "ft_linux" --storagectl "SATA Controller" \
-  --port 0 --device 0 --type hdd --medium "ft_linux.vdi"
-
-# Network
-VBoxManage modifyvm "ft_linux" --nic1 nat
-```
-
-### Guest Additions (Optional for Bonus)
-
-For better integration:
-```bash
-# Mount guest additions
-mount /dev/cdrom /mnt
-
-# Install dependencies (in guest)
-cd /mnt
-./VBoxLinuxAdditions.run
-```
-
-## Initial Boot Process
-
-### Build System
-
-1. **Boot from Live CD/USB**
-   - Use any Linux live environment
-   - Recommended: Debian, Ubuntu live, or LFS LiveCD
-
-2. **Partition the disk**
-   - Follow partition scheme above
-
-3. **Mount partitions**
-   ```bash
-   export LFS=/mnt/lfs
-   mkdir -pv $LFS
-   mount /dev/sda2 $LFS
-   mkdir -pv $LFS/boot
-   mount /dev/sda1 $LFS/boot
-   ```
-
-4. **Begin LFS build**
-   - Follow LFS book from chapter 5 onwards
-
-## Network Configuration
-
-### During Build
-
-```bash
-# Check network in live environment
-ip addr
-ping -c 3 google.com
-```
-
-### In Final System
-
-Network setup in the built system:
-
-```bash
-# Static IP (if needed)
-cat > /etc/sysconfig/ifconfig.eth0 << "EOF"
-ONBOOT=yes
-IFACE=eth0
-SERVICE=ipv4-static
-IP=192.168.1.100
-GATEWAY=192.168.1.1
-PREFIX=24
-BROADCAST=192.168.1.255
-EOF
-
-# Or use DHCP
-cat > /etc/sysconfig/ifconfig.eth0 << "EOF"
-ONBOOT=yes
-IFACE=eth0
-SERVICE=dhclient
-DHCP_START=""
-DHCP_STOP=""
-EOF
-```
-
-## Hostname Configuration
-
-Set hostname to student login:
-
-```bash
-echo "<student_login>" > /etc/hostname
-
-# Also update /etc/hosts
-cat > /etc/hosts << "EOF"
-127.0.0.1 localhost
-127.0.1.1 <student_login>
-::1       localhost
-EOF
-```
-
-## BIOS/UEFI Settings
-
-### VirtualBox
-- Boot order: Hard Disk first
-- Enable EFI if using UEFI boot (optional)
-- Enable PAE/NX
-
-### VMWare
-- Similar settings in VM configuration
-
-## Storage Optimization
-
-### VirtualBox
-```bash
-# Compact VDI (from host, VM must be off)
-VBoxManage modifymedium disk "ft_linux.vdi" --compact
-```
-
-## Snapshot Management
-
-Take snapshots at key points:
-1. After partitioning
-2. After base system build
-3. After kernel compilation
-4. Before testing configurations
-
-```bash
-# VirtualBox snapshot
-VBoxManage snapshot "ft_linux" take "BaseSystem" --description "Base system complete"
-```
-
-## Generating Checksum
-
-After final configuration:
-
-```bash
-# Shutdown VM properly
-shutdown -h now
-
-# From host system
-shasum < ft_linux.vdi > checksum.txt
-
-# Or MD5
-md5sum ft_linux.vdi > checksum.txt
-```
-
-## Troubleshooting
-
-### Network Not Working
-- Check VM network adapter is enabled
-- Verify network service is running in guest
-- Try different network mode (NAT/Bridged)
-
-### Disk Space Issues
-- Increase VM disk size
-- Clean build directories
-- Use dynamic disk allocation
-
-### Boot Failures
-- Verify GRUB installation
-- Check partition mounting
-- Review kernel configuration
-
-## Resources
-
-- [VirtualBox Manual](https://www.virtualbox.org/manual/)
-- [LFS Book - Host System Requirements](http://www.linuxfromscratch.org/lfs/view/stable/chapter02/hostreqs.html)
-- [LFS Book - Partitioning](http://www.linuxfromscratch.org/lfs/view/stable/chapter02/creatingpartition.html)
+> Note: From the instruction in the LFS book I skipped:
+1. the step of creating a separate partition for the LFS build environment, as it is not strictly required and can be done later if desired. However, it is recommended to use separate partitions for better organization and performance during the build process.
+2. Creating part of the directory structure for the LFS system (e.g. etc, var, usr, bibn.) as it will be done later during the actual build process when the LFS system is being constructed. At this stage, we are only preparing the build environment and downloading the necessary sources. (4.2 in the LFS book)
+3. Missing some of the environment variables that are not strictly necessary for the initial setup, but will be set later during the build process when they are needed. For example, `MAKEFLAGS` can be set later to optimize the build process once we have a better understanding of the system's resources and requirements. (4.4 in the LFS book)
