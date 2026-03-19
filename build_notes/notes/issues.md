@@ -12,10 +12,7 @@ This document tracks common issues encountered during the ft_linux build and the
 ```bash
 sudo systemctl disable --now systemd-resolved
 sudo rm -f /etc/resolv.conf
-sudo cat <<EOF > /etc/resolv.conf
-nameserver 8.8.8.8
-nameserver 1.1.1.1
-EOF
+printf 'nameserver 8.8.8.8\nnameserver 1.1.1.1\n' | sudo tee /etc/resolv.conf
 sudo chattr -i /etc/resolv.conf
 sudo reboot
 ```
