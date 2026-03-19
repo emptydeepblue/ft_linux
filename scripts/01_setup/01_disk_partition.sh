@@ -103,4 +103,4 @@ swapon --show
 echo ""
 df -h "$LFS" "$LFS/boot"
 echo ""
-echo "Disk ready. Next: sudo bash scripts/setup/02_env_setup.sh"
+echo "Disk ready. Next: sudo bash scripts/01_setup/02_env_setup.sh"

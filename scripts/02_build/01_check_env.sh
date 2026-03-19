@@ -60,7 +60,7 @@ LFS="${LFS:-/mnt/lfs}"
 if mountpoint -q "$LFS" 2>/dev/null; then
     ok "$LFS is mounted"
 else
-    fail "$LFS is not mounted — run: sudo bash scripts/setup/01_disk_partition.sh"
+    fail "$LFS is not mounted — run: sudo bash scripts/01_setup/01_disk_partition.sh"
 fi
 
 if mountpoint -q "$LFS/boot" 2>/dev/null; then
@@ -85,7 +85,7 @@ for d in tools sources usr/bin usr/lib usr/sbin lib boot; do
     if [ -d "$LFS/$d" ]; then
         ok "$LFS/$d"
     else
-        fail "$LFS/$d missing — run: sudo bash scripts/setup/02_env_setup.sh"
+        fail "$LFS/$d missing — run: sudo bash scripts/01_setup/02_env_setup.sh"
     fi
 done
 

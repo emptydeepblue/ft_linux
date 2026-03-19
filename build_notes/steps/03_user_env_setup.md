@@ -8,10 +8,10 @@ This chapter covers setting up the LFS build environment, including creating a d
 - [Step 3: Create the Directory Layout](#step-3-create-the-directory-layout)
 
 *Scripts*
-- [LFS environment setup](../../scripts/setup/02_env_setup.sh)
+- [LFS environment setup](../../scripts/01_setup/02_env_setup.sh)
 
 ```bash
-sudo bash scripts/setup/02_env_setup.sh
+sudo bash scripts/01_setup/02_env_setup.sh
 # Verify host tools
 sudo su - lfs
 bash scripts/version-check.sh

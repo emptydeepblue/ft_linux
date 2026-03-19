@@ -7,13 +7,13 @@ This document provides instructions on how to compile a cross toolchain for ft_l
 Before you begin, ensure you have all the necessary .tar.gz files for the components of the toolchain, such as binutils, gcc, and glibc. You will also need to have the appropriate development tools installed on your host system.
 
 ## Fast Setup
-- [Check env](../../scripts/build/01_check_env.sh)
-- [Cross toolchain build](../../scripts/build/02_cross_toolchain.sh)
-    - [Binutils](../../scripts/build/cross-toolchain/01_binutils.sh)
-    - [GCC](../../scripts/build/cross-toolchain/02_gcc.sh)
-    - [Linux API](../../scripts/build/cross-toolchain/03_linux_api.sh)
-    - [Glibc](../../scripts/build/cross-toolchain/04_glibc.sh)
-    - [Libstdc](../../scripts/build/cross-toolchain/05_libstdc.sh)
+- [Check env](../../scripts/02_build/01_check_env.sh)
+- [Cross toolchain build](../../scripts/02_build/02_cross_toolchain.sh)
+    - [Binutils](../../scripts/02_build/cross-toolchain/01_binutils.sh)
+    - [GCC](../../scripts/02_build/cross-toolchain/02_gcc.sh)
+    - [Linux API](../../scripts/02_build/cross-toolchain/03_linux_api.sh)
+    - [Glibc](../../scripts/02_build/cross-toolchain/04_glibc.sh)
+    - [Libstdc](../../scripts/02_build/cross-toolchain/05_libstdc.sh)
 
 ```bash
 bash scripts/01_check_env.sh

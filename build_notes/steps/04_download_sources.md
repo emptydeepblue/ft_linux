@@ -7,10 +7,13 @@ This chapter covers downloading all the source packages and patches required for
 - [Step 2: Finalize the Setup](#step-2-finalize-the-setup)
 
 *Scripts*
-- [Dowload sources](../../scripts/setup/03_download_sources.sh)
+- [Dowload sources](../../scripts/01_setup/03_download_sources.sh)
+- [Check sources](../../scripts/01_setup/04_version_check.sh)
 
 ```bash
-bash scripts/setup/03_download_sources.sh
+bash scripts/01_setup/03_download_sources.sh
+# To check the sources versions
+bash scripts/01_setup/04_version_check.sh
 ```
 
 ## Step 1: Download LFS Sources

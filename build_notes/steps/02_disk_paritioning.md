@@ -9,10 +9,10 @@ This document provides instructions for partitioning the disk for a Linux From S
 - [4 Make mounts persistent across reboots](#4-make-mounts-persistent-across-reboots)
 
 *Scripts*
-- [disk partition](../../scripts/setup/01_disk_partition.sh)
+- [disk partition](../../scripts/01_setup/01_disk_partition.sh)
 
 ```bash
-sudo bash scripts/setup/01_disk_partition.sh /dev/sdbs
+sudo bash scripts/01_setup/01_disk_partition.sh /dev/sdbs
 ```
 ### 1 Partition the LFS disk
 
