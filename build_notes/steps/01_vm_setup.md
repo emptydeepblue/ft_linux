@@ -84,6 +84,7 @@ bash scripts/01_setup/00_version_check.sh
 ```
 
 All tools must report a version. Fix any missing ones before proceeding.
+[sh is not bash](../notes/issues.md#2-sh-is-not-bash)
 
 ---
 

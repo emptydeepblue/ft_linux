@@ -17,7 +17,17 @@ sudo chattr -i /etc/resolv.conf
 sudo reboot
 ```
 
-### 2. Package Download Failures
+### 2. sh is NOT Bash
+issue is sh is NOT Bash — on Ubuntu, /bin/sh points to dash by default. Fix it:
+
+```bash
+sudo ln -sf bash /bin/sh
+Then verify:
+bash scripts/01_setup/00_version_check.sh
+```
+Should show `OK: sh is Bash` now.
+
+### 3. Package Download Failures
 **Problem**: After wget list is generated, some downloads fail due to network issues or mirror problems.
 **Solution**:
 1. Check wget log for failed URLs
