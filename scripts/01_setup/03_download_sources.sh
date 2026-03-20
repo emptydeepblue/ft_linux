@@ -3,7 +3,7 @@
 # Run as lfs user AFTER sourcing ~/.bash_profile
 set -euo pipefail
 
-LFS_VERSION="12.2"
+LFS_VERSION="12.4"
 BASE_URL="https://www.linuxfromscratch.org/lfs/downloads/$LFS_VERSION"
 
 # ── Guards ───────────────────────────────────────────────────────────────────
@@ -80,11 +80,6 @@ wget -qc --show-progress \
 # Eudev — udev replacement for SysV (required for kernel module loading / device management)
 wget -qc --show-progress \
     "https://github.com/eudev-project/eudev/releases/download/v3.2.14/eudev-3.2.14.tar.gz"
-
-# LFS Bootscripts — SysV init scripts
-wget -qc --show-progress \
-    "$BASE_URL/lfs-bootscripts-20240825.tar.xz"
-
 echo "      Done."
 
 # ── Remove SystemD-only packages ─────────────────────────────────────────────
@@ -126,13 +121,12 @@ echo ""
 
 # Quick check for the 7 tarballs the cross-toolchain needs most
 echo "Cross-toolchain tarballs check:"
-for pat in "binutils-*.tar.xz" "gcc-*.tar.xz" "linux-*.tar.xz" \
-           "glibc-*.tar.xz"    "mpfr-*.tar.xz" "gmp-*.tar.xz" "mpc-*.tar.xz"; do
-    f=$(ls "$SOURCES"/$pat 2>/dev/null | head -1)
+for name in binutils gcc linux glibc mpfr gmp mpc; do
+    f=$(ls "$SOURCES"/$name-*.tar.* 2>/dev/null | head -1)
     if [ -n "$f" ]; then
-        printf "  OK : %s\n" "$(basename "$f")"
+        printf "  OK      : %s\n" "$(basename "$f")"
     else
-        printf "  MISSING : %s\n" "$pat"
+        printf "  MISSING : %s\n" "$name"
     fi
 done
 

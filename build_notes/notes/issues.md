@@ -31,8 +31,22 @@ Should show `OK: sh is Bash` now.
 **Problem**: After wget list is generated, some downloads fail due to network issues or mirror problems.
 **Solution**:
 1. Check wget log for failed URLs
-2. Try re-run the wget command to see if it succeeds on retry
-3. If still fails, manually download the file from an alternative mirror and place it in the sources directory
+2. If many packages failed try re-run the wget command to see if it succeeds on retry
+3. If just some of them fails, manually download the file from alternative mirrors like: 
+- from GNU ftp
+*example*
+```bash
+wget -c --show-progress \
+    https://ftp.gnu.org/gnu/<tool>/<tool>-<version>.tar.xz \
+    -P $LFS/sources
+```
+- directly from the tool https mirrors
+*example*
+```bash
+wget -c --show-progress \
+    https://www.<tool>.org/<tool>-<version>/<tool>-<version>.tar.xz \
+    -P $LFS/sources
+```
 4. Update wget list with working URLs
 ```
 
