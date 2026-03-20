@@ -8,7 +8,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TC_DIR="$SCRIPT_DIR/cross-toolchain"
+TC_DIR="$SCRIPT_DIR/compiler-toolchain"
 
 START="${1:-1}"
 
