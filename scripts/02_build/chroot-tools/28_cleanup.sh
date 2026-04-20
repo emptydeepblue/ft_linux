@@ -9,7 +9,10 @@ echo ">>> Strip and clean temporary tools"
 
 # ── Strip debug symbols ───────────────────────────────────────────────────────
 
+# Skip libbfd and libopcodes — strip crashes on them and truncates the file,
+# breaking the assembler (as) which links against libbfd.
 find /usr/{lib,libexec} -name \*.so* -type f \
+    ! -name 'libbfd*' ! -name 'libopcodes*' \
     -exec strip --strip-unneeded {} \; 2>/dev/null || true
 
 find /usr/{bin,sbin} -type f \
