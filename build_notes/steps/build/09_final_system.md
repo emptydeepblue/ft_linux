@@ -914,4 +914,4 @@ operations. Only use `lfs` for building inside `$LFS/sources`.
 
 ---
 
-**Next:** [10 System Configuration](10_system_config.md)
+**Next:** [10 System Configuration](10_system_config.md) → [11 Kernel and Bootloader](11_kernel_bootloader.md)

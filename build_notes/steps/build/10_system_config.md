@@ -1,0 +1,173 @@
+# System Configuration — ft_linux
+
+Configure the running environment before building the kernel.
+All commands run **inside the chroot** unless noted otherwise.
+
+---
+
+## Network
+
+```bash
+# hostname — must be your student login (subject requirement)
+echo "everonel" > /etc/hostname
+
+# /etc/hosts
+cat > /etc/hosts << "EOF"
+127.0.0.1   localhost
+127.0.1.1   everonel
+::1         localhost ip6-localhost ip6-loopback
+EOF
+
+# /etc/resolv.conf — use a public resolver
+cat > /etc/resolv.conf << "EOF"
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+EOF
+```
+
+---
+
+## System locale and console
+
+```bash
+cat > /etc/profile << "EOF"
+export LANG=en_US.UTF-8
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+EOF
+
+cat > /etc/inputrc << "EOF"
+set horizontal-scroll-mode Off
+set meta-flag On
+set input-meta On
+set convert-meta Off
+set output-meta On
+set bell-style none
+"\eOd": backward-word
+"\eOc": forward-word
+"\e[1~": beginning-of-line
+"\e[4~": end-of-line
+"\e[5~": beginning-of-history
+"\e[6~": end-of-history
+"\e[3~": delete-char
+"\e[2~": quoted-insert
+"\eOH": beginning-of-line
+"\eOF": end-of-line
+"\e[H": beginning-of-line
+"\e[F": end-of-line
+EOF
+
+cat > /etc/shells << "EOF"
+/bin/sh
+/bin/bash
+EOF
+```
+
+---
+
+## SysV init scripts
+
+Install the LFS bootscripts package (provides `/etc/rc.d/`, `/etc/inittab`, etc.):
+
+```bash
+cd /sources && tar -xf lfs-bootscripts-*.tar.xz && cd lfs-bootscripts-*/
+make install
+cd /sources && rm -rf lfs-bootscripts-*/
+```
+
+> If the tarball is missing, download it from outside the chroot:
+> ```bash
+> wget -P /mnt/lfs/sources \
+>   https://www.linuxfromscratch.org/lfs/downloads/stable/lfs-bootscripts-20230728.tar.xz
+> ```
+
+**`/etc/inittab`** — lfs-bootscripts installs `inittab.d/` fragments but NOT the file
+itself; sysvinit requires `/etc/inittab` directly. Create it:
+
+```bash
+cat > /etc/inittab << "EOF"
+# Begin /etc/inittab
+
+id:3:initdefault:
+
+si::sysinit:/etc/rc.d/init.d/rc S
+
+l0:0:wait:/etc/rc.d/init.d/rc 0
+l1:S1:wait:/etc/rc.d/init.d/rc 1
+l2:2:wait:/etc/rc.d/init.d/rc 2
+l3:3:wait:/etc/rc.d/init.d/rc 3
+l4:4:wait:/etc/rc.d/init.d/rc 4
+l5:5:wait:/etc/rc.d/init.d/rc 5
+l6:6:wait:/etc/rc.d/init.d/rc 6
+
+ca:12345:ctrlaltdel:/sbin/shutdown -t1 -a -r now
+
+su:S016:once:/sbin/sulogin
+
+1:2345:respawn:/sbin/agetty --noclear tty1 9600
+2:2345:respawn:/sbin/agetty tty2 9600
+3:2345:respawn:/sbin/agetty tty3 9600
+4:2345:respawn:/sbin/agetty tty4 9600
+5:2345:respawn:/sbin/agetty tty5 9600
+6:2345:respawn:/sbin/agetty tty6 9600
+
+# End /etc/inittab
+EOF
+```
+
+**Clock configuration:**
+
+```bash
+cat > /etc/sysconfig/clock << "EOF"
+UTC=1
+EOF
+```
+
+**Console configuration:**
+
+```bash
+cat > /etc/sysconfig/console << "EOF"
+KEYMAP="us"
+FONT="lat2a-16 -m 8859-2"
+EOF
+```
+
+**Network interface configuration** (DHCP on first ethernet):
+
+```bash
+cat > /etc/sysconfig/ifconfig.eth0 << "EOF"
+ONBOOT=yes
+IFACE=eth0
+SERVICE=dhcpcd
+DHCP_START="-b -q -t 30"
+DHCP_STOP="-k"
+EOF
+```
+
+> Adapt `eth0` to your actual interface name — check with `ip link` after first boot.
+
+---
+
+## /etc/fstab
+
+```bash
+cp /sources/config/fstab /etc/fstab 2>/dev/null || \
+cat > /etc/fstab << "EOF"
+# <file system>  <mount point>  <type>  <options>           <dump>  <pass>
+/dev/sda2        /              ext4    defaults             1       1
+/dev/sda1        /boot          ext4    defaults             1       2
+/dev/sda3        none           swap    sw                   0       0
+proc             /proc          proc    nosuid,noexec,nodev  0       0
+sysfs            /sys           sysfs   nosuid,noexec,nodev  0       0
+devpts           /dev/pts       devpts  gid=5,mode=620       0       0
+tmpfs            /run           tmpfs   defaults             0       0
+devtmpfs         /dev           devtmpfs mode=0755,nosuid    0       0
+tmpfs            /dev/shm       tmpfs   defaults             0       0
+EOF
+```
+
+> Adjust `/dev/sdaX` device names to match your actual VM disk layout.
+> Verify with `lsblk` or `blkid` from outside the chroot.
+
+---
+
+**Next:** [11 Kernel and Bootloader](11_kernel_bootloader.md)

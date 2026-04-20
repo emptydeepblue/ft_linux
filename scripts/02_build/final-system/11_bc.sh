@@ -5,7 +5,7 @@ echo ">>> Bc"
 cd /sources
 tar -xf bc-*.tar.xz
 cd bc-*/
-CC=gcc ./configure --prefix=/usr -G -O3 -r
+CC=gcc CFLAGS="-O3 -std=c11" ./configure --prefix=/usr -G -r
 make
 make install
 cd /sources && rm -rf bc-*/
