@@ -1,105 +1,131 @@
 # ft_linux
 
-## How to Train Your Kernel - Custom Linux Distribution
+Build a minimal but functional Linux distribution from source — kernel, toolchain, init system, and userspace — following the Linux From Scratch (LFS) methodology.
 
-This repository contains the configuration files and build notes for a custom Linux distribution built as part of the 42 ft_linux project.
+**Specialization:** Unix/Kernel
+**XP:** 4,200 · **People:** 1 · **Status:** 🟦 Completed
 
-## Project Overview
+> 📖 **New here?** Read [docs/DOCUMENTATION.md](docs/DOCUMENTATION.md) — a full
+> walkthrough of the project and every concept behind it (toolchain bootstrapping,
+> chroot, the boot chain, FHS, init, eudev, GRUB…). This README is the quick-start.
 
-A minimal but functional Linux distribution built from scratch, including:
-- Custom compiled Linux kernel (version >= 4.0)
-- Essential system packages and utilities
-- Network connectivity
-- FHS-compliant filesystem hierarchy
+---
 
-## System Specifications
+## 🚀 Features
 
-- **Kernel Version**: Linux 4.x-everonel
-- **Hostname**: everonel
-- **Architecture**: 64-bit (or 32-bit as chosen)
-- **Init System**: SysVinit (or SystemD)
-- **Bootloader**: GRUB
-- **Device Manager**: Eudev
+- Custom-compiled Linux kernel (≥ 4.0), booted on a VM
+- Multi-stage toolchain bootstrap (cross-toolchain → temporary tools → chroot → final system)
+- FHS-compliant root filesystem
+- GRUB bootloader, SysVinit init, eudev device manager
+- Network connectivity, package management primitives, working shell environment
+- Reproducible build: every step scripted in `scripts/`
 
-## Partition Scheme
+## 🛠️ Build & Run
 
-The system uses at least 3 partitions:
-- `/boot` - Boot partition (mounted as /dev/sda1)
-- `/` - Root partition (mounted as /dev/sda2)
-- `swap` - Swap partition (/dev/sda3)
+**Prerequisites:**
+- VirtualBox / VMware
+- x86_64 host CPU, ≥ 4 cores recommended
+- ≥ 8 GB RAM, ≥ 30 GB disk for the LFS build environment
+- Host satisfies LFS `version-check.sh`
 
-## Directory Structure
+```bash
+# 1. Host prep (as root), then download sources (as the lfs user)
+sudo bash scripts/01_setup/00_version_check.sh
+sudo bash scripts/01_setup/01_disk_partition.sh /dev/sdb
+sudo bash scripts/01_setup/02_env_setup.sh
+sudo su - lfs
+bash scripts/01_setup/03_download_sources.sh
+
+# 2. Toolchain + temporary tools (as lfs; resume from step N with: … <N>)
+bash scripts/02_build/01_run_compiler_toolchain.sh
+bash scripts/02_build/02_run_temporary_tools.sh
+
+# 3. Enter chroot (root on host), then build the rest inside it
+sudo bash scripts/02_build/03_enter_chroot.sh
+bash /sources/scripts/04_run_chroot_tools.sh      # inside chroot
+bash /sources/scripts/05_run_final_system.sh      # inside chroot
+```
+
+Then configure the system, build the kernel, and install GRUB — see
+[notes/steps/build/10_system_config.md](notes/steps/build/10_system_config.md)
+and [11_kernel_bootloader.md](notes/steps/build/11_kernel_bootloader.md).
+
+## 🧪 Evaluation
+
+The disk image's SHA checksum is in [checksum.txt](checksum.txt). Generated with:
+
+```bash
+shasum < disk.vdi > checksum.txt
+```
+
+The `.vdi` itself is shared out-of-band for peer evaluation.
+
+## 📁 Project Structure
 
 ```
 ft_linux/
-├── checksum.txt          # SHA checksum of disk image
-├── README.md            # This file
-├── subject.md           # Project subject
-├── build_notes/         # Build documentation
-│   ├── issues.md       # Known issues and solutions
-│   ├── kernel.md       # Kernel build process
-│   ├── packages.md     # Package installation notes
-│   └── vm_config.md    # Virtual machine configuration
-└── config/             # System configuration files
-    ├── fstab           # Filesystem table
-    ├── grub.cfg        # GRUB configuration
-    └── kernel.config   # Kernel configuration
+├── README.md           # this file — quick-start + project card
+├── checksum.txt        # SHA of the final disk image (for peer evaluation)
+├── wget-list-sysv      # pinned list of every upstream source URL
+├── config/             # reference system configs (fstab, grub.cfg, kernel.config)
+├── scripts/
+│   ├── 01_setup/       # version check, partitioning, env, source download
+│   └── 02_build/       # toolchain → temporary tools → chroot → final system
+│       ├── compiler-toolchain/   temporary-tools/
+│       ├── chroot-tools/         final-system/
+│       └── 0{1..5}_run_*.sh      # per-phase orchestrators
+├── notes/              # step-by-step guides, cheatsheet, known issues
+│   ├── steps/setup/    notes/steps/build/
+│   ├── cheatsheet.md   issues.md   sources/sources.md
+└── docs/
+    ├── DOCUMENTATION.md  # full conceptual walkthrough
+    └── en.subject.pdf    # the 42 subject
 ```
 
-## Build Process
+## 🔧 Implementation
 
-### Prerequisites
-- VirtualBox or VMWare
-- **CPU**: AMD/Intel x86 (32-bit) or x86_64 (64-bit) 4 cores or more
-- **RAM**: 8 GB or more
-- **OS and tools**: must validate the `./version-check.sh` script to ensure compatibility
-- **Disk Space**: At least 30 GB for the LFS build environment
+**System specs:**
+- **Base:** Linux From Scratch 12.4 (SysV)
+- **Hostname:** everonel
+- **Architecture:** x86_64
+- **Kernel:** Linux 6.16.1-everonel (subject requires ≥ 4.0)
+- **Toolchain:** GCC 15.2.0 · Glibc 2.42
+- **Init:** SysVinit
+- **Bootloader:** GRUB 2 (BIOS/MBR)
+- **Device manager:** eudev
 
-### Steps
+**Partition layout** (the build disk is `/dev/sdb` on the host; the same disk is
+`/dev/sda` once booted inside the VM):
 
-1. **VM Setup** - See [build_notes/vm_config.md](build_notes/vm_config.md)
-2. **Kernel Build** - See [build_notes/kernel.md](build_notes/kernel.md)
-3. **Package Installation** - See [build_notes/packages.md](build_notes/packages.md)
-4. **Configuration** - Apply configs from `config/` directory
+| Mount  | Device     | FS   | Purpose         |
+|--------|------------|------|-----------------|
+| `/boot`| /dev/sda1  | ext4 | Kernel + GRUB   |
+| `/`    | /dev/sda2  | ext4 | Root filesystem |
+| swap   | /dev/sda3  | swap | Swap            |
 
-## Required Packages
+**Build pipeline:**
+1. **Compiler toolchain** — host-built cross-binutils + GCC pass 1 targeting the LFS root
+2. **Temporary tools** — minimal userspace built with the cross-toolchain
+3. **Chroot** — switch into the LFS root, rebuild final tools using themselves
+4. **Final system** — full userspace, kernel build, GRUB install
 
-The system includes all mandatory packages specified in the subject:
-- Core utilities (coreutils, bash, etc.)
-- Build tools (gcc, make, autotools, etc.)
-- System tools (udev, sysvinit, grub, etc.)
-- Libraries (glibc, ncurses, readline, etc.)
+## 📚 Learning Objectives
 
-See [build_notes/packages.md](build_notes/packages.md) for the complete list and installation order.
+- How a Linux system actually boots (BIOS/UEFI → bootloader → kernel → init → userspace)
+- Cross-compilation and toolchain bootstrapping
+- FHS, package layout, and the role of each base package
+- Kernel configuration and build (`make menuconfig`, modules, initramfs)
+- VM disk images, partitioning, GRUB
 
-## Network Configuration
+## 🔗 References
 
-The system is configured with network connectivity for:
-- Package downloads (wget/curl)
-- System updates
-- Remote access (SSH if configured)
-
-## Evaluation
-
-For peer evaluation:
-1. The disk image checksum is stored in [checksum.txt](checksum.txt)
-2. The virtual machine disk image is available separately
-3. Generated with: `shasum < disk.vdi > checksum.txt`
-
-## Troubleshooting
-
-Common issues and solutions are documented in [build_notes/issues.md](build_notes/issues.md).
-
-## Resources
-
-- [Linux From Scratch (LFS)](http://www.linuxfromscratch.org/)
-- [Software Building HOWTO](https://tldp.org/HOWTO/Software-Building-HOWTO.html)
-- [Installing from Source](https://moi.vonos.net/linux/beginners-installing-from-source/)
-- [Kernel.org](https://www.kernel.org/)
+- [Full project documentation](docs/DOCUMENTATION.md) — concepts explained end to end
+- [Linux From Scratch (LFS)](https://www.linuxfromscratch.org/)
 - [Filesystem Hierarchy Standard](https://refspecs.linuxfoundation.org/fhs.shtml)
+- [Software-Building HOWTO](https://tldp.org/HOWTO/Software-Building-HOWTO.html)
+- [kernel.org](https://www.kernel.org/)
+- [notes/cheatsheet.md](notes/cheatsheet.md), [notes/issues.md](notes/issues.md)
 
-## Author
+---
 
-Student: everonel 
-School: 42  
-Project: ft_linux (how_to_train_your_kernel)
+*42 School — RNCP7 · Unix/Kernel*

@@ -19,7 +19,10 @@ tmpfs            /run           tmpfs   defaults          0       0
 devtmpfs         /dev           devtmpfs mode=0755,nosuid 0       0
 
 # Shared memory
-tmpfs            /dev/shm       tmpfs   defaults          0       0
+tmpfs            /dev/shm       tmpfs   nosuid,nodev      0       0
+
+# Control group hierarchy (required by lfs-bootscripts mountvirtfs)
+cgroup2          /sys/fs/cgroup cgroup2 nosuid,noexec,nodev 0     0
 
 # Optional: CD-ROM (uncomment if needed)
 # /dev/sr0       /media/cdrom   iso9660 ro,user,noauto    0       0

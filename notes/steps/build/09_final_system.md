@@ -22,9 +22,11 @@ bash /sources/scripts/05_run_final_system.sh
 bash /sources/scripts/05_run_final_system.sh <N>
 ```
 
-> Step 24 (Shadow) is **interactive** — it will prompt for the root password.
-> Step 25 (GCC) is the longest — expect 30–90 min.
-> If automating, run steps 1–23, set the password manually, then resume from 25.
+> **Shadow** is **interactive** — it prompts for the root password.
+> **GCC** is the longest build — expect 30–90 min.
+> If automating, build up to Shadow, set the password, then resume the runner
+> from the GCC step. Pass the step numbers printed by `05_run_final_system.sh`
+> to its resume argument (in that runner: Shadow = 25, GCC = 26).
 
 ---
 
@@ -661,7 +663,7 @@ cd /sources && rm -rf e2fsprogs-*/
 
 ### Step 71 — Sysklogd
 
-> **Version note:** LFS 12.2 uses sysklogd **2.6.1** (troglobit rewrite), not the
+> **Version note:** LFS 12.4 uses sysklogd **2.6.1** (troglobit rewrite), not the
 > old 1.5.1. The `ksym_mod.c`/`union wait` patches only apply to 1.x — skip them.
 > Build uses autoconf instead of a bare Makefile.
 

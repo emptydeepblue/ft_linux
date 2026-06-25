@@ -48,5 +48,4 @@ wget -c --show-progress \
     -P $LFS/sources
 ```
 4. Update wget list with working URLs
-```
 

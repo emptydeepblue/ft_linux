@@ -1,49 +1,57 @@
-# Build Notes for ft_linux
+# Build Notes — ft_linux
 
-This document serves as a comprehensive guide for setting up the build environment and compiling the Linux From Scratch (LFS) system for the ft_linux subject. It includes step-by-step instructions, troubleshooting tips, and known issues encountered during the build process.
+These notes are the narrated walkthrough behind the scripts in
+[`../scripts/`](../scripts/): step-by-step instructions, the reasoning for each
+phase, and the problems hit along the way. For the high-level concepts, read
+[`../docs/DOCUMENTATION.md`](../docs/DOCUMENTATION.md) first; for a quick
+quoting-during-evaluation reference, see [`cheatsheet.md`](cheatsheet.md).
 
-*Table of Contents:*
-- [01 VM Setup](steps/01_vm_setup.md)
-- [02 Disk Partitioning and Formatting](steps/02_disk_partitioning.md)
-- [03 User and Environment Setup](steps/03_user_env_setup.md)
-- [04 Downloading LFS Sources](steps/04_download_sources.md)
-- [05 Building Cross-Toolchain](steps/05_cross_toolchain.md)
-<!--- [06 Building Cross Temporary Tools](06_temp_tools.md)
-- [07 Chroot setup](07_chroot_setup.md)
-- [08 Building LFS System](08_building_lfs.md) 
-- [09 Configuring the System](09_configuring_system.md)
-- [10 Compile Kernel and GRUB](10_kernel_and_grub.md)
-- [11 Post Boot Configuration](11_post_boot.md) -->
+## Walkthrough
 
-You can follow the step by step guides or just execute the scripts for each step:
+**Setup (host side)**
+- [01 — VM setup](steps/setup/01_vm_setup.md)
+- [02 — Disk partitioning & formatting](steps/setup/02_disk_partitioning.md)
+- [03 — User & environment setup](steps/setup/03_user_env_setup.md)
+- [04 — Downloading the LFS sources](steps/setup/04_download_sources.md)
 
-**1. VM Setup**
-follow the guide [vm setup](steps/01_vm_setup.md)
-**2. As root on host — partition the LFS disk**
+**Build**
+- [06 — Cross-toolchain](steps/build/06_cross_toolchain.md)
+- [07 — Cross-compiled temporary tools](steps/build/07_temporary_tools.md)
+- [08 — Chroot setup & extra temporary tools](steps/build/08_chroot_setup.md)
+- [09 — Final system (Chapter 8 packages)](steps/build/09_final_system.md)
+- [10 — System configuration](steps/build/10_system_config.md)
+- [11 — Kernel build & bootloader](steps/build/11_kernel_bootloader.md)
+
+## TL;DR — run the scripts
+
+Each phase has a guide above; if you just want to run it, the scripts mirror the
+same order. All build commands assume you are the right user with the
+environment sourced (see each guide for who runs what).
+
 ```bash
+# 1. Host prep (as root), then download sources (as the lfs user)
+sudo bash scripts/01_setup/00_version_check.sh
 sudo bash scripts/01_setup/01_disk_partition.sh /dev/sdb
-```
-**3. As root on host — create user + dirs + shell env**
-```bash
 sudo bash scripts/01_setup/02_env_setup.sh
-```
-**4. Switch to lfs, download all sources**
-```bash
 sudo su - lfs
-bash scripts/01_setup/03_download_sources.shs
-```
-**5. Verify env and tools**
-```bash
-bash scripts/01_setup/04_version_check.sh
-bash scripts/02_build/01_check_env.shs
-```
-**6. Build the entire cross-toolchain (or resume from step N)**
-```bash
-bash scripts/02_build/02_run_toolchain.sh
-# bash scripts/02_build/02_run_toolchain.sh 3   ← resume from step 3
+bash scripts/01_setup/03_download_sources.sh
+
+# 2. Toolchain + temporary tools (as lfs; resume from step N with: … <N>)
+bash scripts/02_build/01_run_compiler_toolchain.sh
+bash scripts/02_build/02_run_temporary_tools.sh
+
+# 3. Enter chroot (root on host), then build inside it
+sudo bash scripts/02_build/03_enter_chroot.sh
+bash /sources/scripts/04_run_chroot_tools.sh      # inside chroot
+bash /sources/scripts/05_run_final_system.sh      # inside chroot
 ```
 
-*Other Resources:*
-- [Build Logs](logs/)
-- [Known Issues and Solutions](issues.md)
-- [Package Sources and Checksums](sources.md)
+Then follow guides [10](steps/build/10_system_config.md) and
+[11](steps/build/11_kernel_bootloader.md) to configure the system, build the
+kernel, and install GRUB.
+
+## Other resources
+
+- [Known issues & solutions](issues.md)
+- [Package list & sources](sources/sources.md)
+- [Evaluation cheatsheet](cheatsheet.md)

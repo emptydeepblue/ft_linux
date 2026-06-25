@@ -28,9 +28,9 @@ echo ""
 lsblk "$DISK"
 echo ""
 echo "  Layout to create:"
-echo "    ${DISK}1  500M  ext4  → $LFS/boot"
-echo "    ${DISK}2    2G  swap"
-echo "    ${DISK}3  rest  ext4  → $LFS  (root)"
+echo "    ${DISK}1  512M  ext4  → $LFS/boot   (boot partition)"
+echo "    ${DISK}2  rest  ext4  → $LFS        (root filesystem)"
+echo "    ${DISK}3    2G  swap                (swap)"
 echo ""
 read -rp "Partition $DISK? ALL DATA WILL BE LOST. Type 'yes' to continue: " confirm
 [ "$confirm" = "yes" ] || { echo "Aborted."; exit 0; }
@@ -43,12 +43,20 @@ echo "[1/4] Partitioning $DISK..."
 # Wipe any existing partition table
 wipefs -a "$DISK" &>/dev/null || true
 
-sfdisk --quiet "$DISK" << 'EOF'
+# Layout: p1 /boot (512M) · p2 / root (fills the disk minus swap) · p3 swap (~2G).
+# Partition numbers are kept in sync with config/fstab and config/grub.cfg:
+#   /dev/sdaN 1 = /boot, 2 = /, 3 = swap  (inside the VM the disk is /dev/sda).
+BOOT_MIB=512
+SWAP_MIB=2048
+DISK_MIB=$(( $(blockdev --getsize64 "$DISK") / 1024 / 1024 ))
+ROOT_MIB=$(( DISK_MIB - BOOT_MIB - SWAP_MIB - 8 ))   # 8 MiB slack for alignment
+
+sfdisk --quiet "$DISK" << EOF
 label: dos
 
-,500M,83
-,2G,82
-,,83
+,${BOOT_MIB}M,83
+,${ROOT_MIB}M,83
+,,82
 EOF
 
 # Give the kernel time to re-read the partition table
@@ -61,25 +69,25 @@ echo "      Done."
 
 echo "[2/4] Formatting partitions..."
 mkfs.ext4 -F -L "lfs-boot" "${DISK}1"
-mkswap    -L "lfs-swap"    "${DISK}2"
-mkfs.ext4 -F -L "lfs-root" "${DISK}3"
+mkfs.ext4 -F -L "lfs-root" "${DISK}2"
+mkswap    -L "lfs-swap"    "${DISK}3"
 echo "      Done."
 
 # ── Mount ────────────────────────────────────────────────────────────────────
 
 echo "[3/4] Mounting to $LFS..."
 mkdir -pv "$LFS"
-mount -v -t ext4 "${DISK}3" "$LFS"
+mount -v -t ext4 "${DISK}2" "$LFS"
 mkdir -pv "$LFS/boot"
 mount -v -t ext4 "${DISK}1" "$LFS/boot"
-swapon -v "${DISK}2"
+swapon -v "${DISK}3"
 echo "      Done."
 
 # ── /etc/fstab ───────────────────────────────────────────────────────────────
 
 echo "[4/4] Adding LFS entries to /etc/fstab..."
 
-if grep -q "lfs-root\|${DISK}3" /etc/fstab 2>/dev/null; then
+if grep -q "lfs-root\|${DISK}2" /etc/fstab 2>/dev/null; then
     echo "      Entries already present in /etc/fstab, skipping."
 else
     cat >> /etc/fstab << EOF

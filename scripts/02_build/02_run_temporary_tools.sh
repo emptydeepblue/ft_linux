@@ -76,4 +76,5 @@ TOTAL=$(( $(date +%s) - TOTAL_START ))
 echo "=== Temporary tools complete in ${TOTAL}s ==="
 echo ""
 echo "Next phase: Enter chroot and build additional temporary tools (Chapter 7)"
-echo "  See build_notes/steps/build/08_chroot_setup.md"
+echo "  sudo bash scripts/02_build/03_enter_chroot.sh"
+echo "  See notes/steps/build/08_chroot_setup.md"

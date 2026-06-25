@@ -1,5 +1,5 @@
 #!/bin/bash
-# 05_run_final_system.sh — Build the complete LFS final system (80 steps)
+# 05_run_final_system.sh — Build the LFS final system (Chapter 8 packages)
 # Run INSIDE the chroot as root.
 #
 # Usage:
@@ -8,9 +8,10 @@
 #
 # Build order notes:
 #   Step 3  — Python Bootstrap: libffi + Python built early because Glibc 2.39+
-#             requires Python at build time. Both are rebuilt at steps 49+50.
-#   Step 26 — Shadow: INTERACTIVE — prompts for root password.
-#   Step 27 — GCC: longest build, 30–90 min.
+#             requires Python at build time. Both are rebuilt at their normal
+#             positions later in the list.
+#   Step 25 — Shadow: INTERACTIVE — prompts for root password.
+#   Step 26 — GCC: longest build, 30–90 min.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -125,5 +126,6 @@ done
 TOTAL=$(( $(date +%s) - TOTAL_START ))
 echo "=== Final system complete in ${TOTAL}s ==="
 echo ""
-echo "Next: System Configuration (Chapter 9)"
-echo "  bash /sources/scripts/06_system_config.sh"
+echo "Next: System configuration, kernel build, and bootloader (Chapters 9–10)"
+echo "  See notes/steps/build/10_system_config.md"
+echo "  and  notes/steps/build/11_kernel_bootloader.md"

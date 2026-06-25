@@ -62,12 +62,16 @@ sudo fdisk /dev/sdb
 
 Inside `fdisk`, run these commands in order:
 
+The partition **numbers** must match `config/fstab` and `config/grub.cfg`:
+`1` = `/boot`, `2` = `/` (root), `3` = swap. Inside the VM this disk becomes
+`/dev/sda`, so root ends up at `/dev/sda2` — the device GRUB boots from.
+
 | Command sequence | Result |
 |---|---|
-| `n` → `p` → `1` → Enter → `+500M` | Partition 1: LFS `/boot` (500 MB) |
-| `n` → `p` → `2` → Enter → `+2G` | Partition 2: swap (2 GB) |
-| `n` → `p` → `3` → Enter → Enter | Partition 3: LFS `/` root (remaining space) |
-| `t` → `2` → `82` | Set partition 2 type to Linux swap |
+| `n` → `p` → `1` → Enter → `+512M` | Partition 1: LFS `/boot` (512 MB) |
+| `n` → `p` → `2` → Enter → `+27G` | Partition 2: LFS `/` root (size to taste) |
+| `n` → `p` → `3` → Enter → Enter | Partition 3: swap (remaining space) |
+| `t` → `3` → `82` | Set partition 3 type to Linux swap |
 | `w` | Write and exit |
 
 Verify:
@@ -78,9 +82,9 @@ lsblk /dev/sdb
 Expected:
 ```
 sdb      30G
-├─sdb1  500M    ← LFS /boot
-├─sdb2    2G    ← swap
-└─sdb3 27.5G    ← LFS / (root)
+├─sdb1  512M    ← LFS /boot
+├─sdb2   27G    ← LFS / (root)
+└─sdb3  2.5G    ← swap
 ```
 
 ---
@@ -89,8 +93,8 @@ sdb      30G
 
 ```bash
 sudo mkfs.ext4 -F -L "lfs-boot" /dev/sdb1   # LFS /boot
-sudo mkswap       -L "lfs-swap" /dev/sdb2   # swap
-sudo mkfs.ext4 -F -L "lfs-root" /dev/sdb3   # LFS / (root)
+sudo mkfs.ext4 -F -L "lfs-root" /dev/sdb2   # LFS / (root)
+sudo mkswap       -L "lfs-swap" /dev/sdb3   # swap
 ```
 
 ---
@@ -100,13 +104,13 @@ sudo mkfs.ext4 -F -L "lfs-root" /dev/sdb3   # LFS / (root)
 ```bash
 # Mount root FIRST, then boot inside it
 sudo mkdir -pv $LFS
-sudo mount -v -t ext4 /dev/sdb3 $LFS
+sudo mount -v -t ext4 /dev/sdb2 $LFS
 
 sudo mkdir -pv $LFS/boot
 sudo mount -v -t ext4 /dev/sdb1 $LFS/boot
 
 # Enable swap
-sudo swapon -v /dev/sdb2
+sudo swapon -v /dev/sdb3
 ```
 
 Verify:

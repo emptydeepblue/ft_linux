@@ -23,6 +23,11 @@ mkdir -pv /etc/udev/rules.d
 make check
 make install
 
+# The lfs-bootscripts udev/udev_retry scripts call /bin/udevadm (= /usr/bin/udevadm
+# on a /usr-merged system), but eudev installs udevadm to /usr/sbin. Add the alias
+# so the boot scripts find it.
+ln -sfv /usr/sbin/udevadm /usr/bin/udevadm
+
 # install udev-lfs boot scripts and rules
 tar -xf ../udev-lfs-*.tar.xz
 make -f udev-lfs-*/Makefile.lfs install

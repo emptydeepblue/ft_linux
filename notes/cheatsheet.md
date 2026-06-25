@@ -16,7 +16,7 @@
 | Swap partition | `/dev/sda3` |
 | Kernel sources | `/usr/src/kernel-6.16.1` |
 | Kernel binary | `/boot/vmlinuz-6.16.1-everonel` |
-| LFS version | 12.2 |
+| LFS version | 12.4 |
 | GCC version | 15.2.0 |
 | Glibc version | 2.42 |
 

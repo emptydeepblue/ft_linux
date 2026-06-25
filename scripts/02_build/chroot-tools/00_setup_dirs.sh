@@ -65,6 +65,7 @@ input:x:24:
 mail:x:34:
 kvm:x:61:
 uuidd:x:80:
+sgx:x:101:
 wheel:x:97:
 users:x:999:
 nogroup:x:65534:

@@ -1,5 +1,5 @@
 #!/bin/bash
-# 03_download_sources.sh — Download and verify all LFS 12.2 SysV source packages
+# 03_download_sources.sh — Download and verify all LFS 12.4 SysV source packages
 # Run as lfs user AFTER sourcing ~/.bash_profile
 set -euo pipefail
 
@@ -83,26 +83,18 @@ wget -qc --show-progress \
 echo "      Done."
 
 # ── Remove SystemD-only packages ─────────────────────────────────────────────
+# The SysV wget-list already excludes most systemd-specific packages; this is a
+# belt-and-suspenders cleanup for the few that may slip in. Only packages that
+# are NOT built anywhere under scripts/02_build/ are removed here — do not add
+# zstd, libxcrypt, openssl, Python, meson, ninja, flit_core, markupsafe, jinja2
+# or elfutils to this list: a SysV LFS build still needs them.
 
-echo "[5/5] Removing SystemD-only packages (not needed for SysV)..."
+echo "[5/5] Removing SystemD-only packages (not used by a SysV build)..."
 
 rm -fv \
-    dbus-*.tar.gz          \
-    elfutils-*.tar.bz2     \
-    flit_core-*.tar.gz     \
-    jinja2-*.tar.gz        \
-    libxcrypt-*.tar.xz     \
-    markupsafe-*.tar.gz    \
-    meson-*.tar.gz         \
-    ninja-*.tar.gz         \
-    openssl-*.tar.gz       \
-    packaging-*.tar.gz     \
-    python-*-docs-*.tar.bz2 \
-    Python-*.tar.xz        \
-    setuptools-*.tar.gz    \
-    systemd-*.tar.gz       \
-    systemd-man-pages-*.tar.xz \
-    zstd-*.tar.gz          \
+    dbus-*.tar.*               \
+    systemd-*.tar.*            \
+    systemd-man-pages-*.tar.*  \
     2>/dev/null || true
 
 echo "      Done."
@@ -131,4 +123,4 @@ for name in binutils gcc linux glibc mpfr gmp mpc; do
 done
 
 echo ""
-echo "Next: bash scripts/run_toolchain.sh"
+echo "Next: bash scripts/02_build/01_run_compiler_toolchain.sh"

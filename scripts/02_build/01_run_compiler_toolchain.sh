@@ -1,10 +1,10 @@
 #!/bin/bash
-# run_toolchain.sh — Build the complete LFS cross-toolchain (steps 1–5)
+# 01_run_compiler_toolchain.sh — Build the complete LFS cross-toolchain (steps 1–5)
 # Run as lfs user after sourcing ~/.bash_profile
 #
 # Usage:
-#   bash run_toolchain.sh          # run all 5 steps
-#   bash run_toolchain.sh 3        # resume from step 3 (skip 1–2)
+#   bash 01_run_compiler_toolchain.sh          # run all 5 steps
+#   bash 01_run_compiler_toolchain.sh 3        # resume from step 3 (skip 1–2)
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -71,4 +71,4 @@ echo "  readelf -l a.out | grep interpreter"
 echo "  rm a.out"
 echo ""
 echo "Next phase: Cross-compile temporary tools (Chapter 6)"
-echo "  cd \$LFS/sources && bash /path/to/06_temp_tools.sh"
+echo "  bash scripts/02_build/02_run_temporary_tools.sh"
