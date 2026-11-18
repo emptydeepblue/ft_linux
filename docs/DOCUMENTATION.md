@@ -430,8 +430,7 @@ ft_linux/
 │   ├── issues.md             # problems hit and how they were fixed
 │   └── steps/                # detailed, narrated walkthrough of every chapter
 └── docs/
-    ├── DOCUMENTATION.md      # ← you are here
-    └── en.subject.pdf        # the official 42 subject
+    └── DOCUMENTATION.md      # ← you are here
 ```
 
 Each per-package script is numbered to encode the **global build order** — that

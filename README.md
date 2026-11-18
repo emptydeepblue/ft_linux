@@ -78,8 +78,7 @@ ft_linux/
 │   ├── steps/setup/    notes/steps/build/
 │   ├── cheatsheet.md   issues.md   sources/sources.md
 └── docs/
-    ├── DOCUMENTATION.md  # full conceptual walkthrough
-    └── en.subject.pdf    # the 42 subject
+    └── DOCUMENTATION.md  # full conceptual walkthrough
 ```
 
 ## 🔧 Implementation
