@@ -1,5 +1,13 @@
 # Kernel Build and Bootloader — ft_linux
 
+> **Automated:** `scripts/03_system/03_kernel.sh` (sources in `/usr/src/kernel-$KVER`,
+> `make defconfig` + [config/kernel.config](../../../config/kernel.config) via
+> `merge_config.sh`, checks that every option survived and that
+> `kernelrelease` = `6.16.1-everonel`) and `04_grub.sh` (`grub-install
+> --target=i386-pc` on the disk holding `/boot` — the loop device when building
+> on the image — plus a generated grub.cfg). Both run from
+> `06_run_system_config.sh`. The manual steps below are kept as explanation.
+
 ## Subject requirements (checklist)
 
 - [ ] Kernel version >= 4.0

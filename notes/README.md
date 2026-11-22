@@ -45,10 +45,11 @@ bash $FT_DIR/scripts/02_build/02_run_temporary_tools.sh
 sudo bash scripts/02_build/03_enter_chroot.sh
 bash /sources/ft_linux/scripts/02_build/04_run_chroot_tools.sh      # inside chroot
 bash /sources/ft_linux/scripts/02_build/05_run_final_system.sh      # inside chroot
+bash /sources/ft_linux/scripts/02_build/06_run_system_config.sh   # inside chroot: ch. 9-10 (bootscripts, /etc, kernel, GRUB)
 ```
 
-Then follow guides [10](steps/build/10_system_config.md) and
-[11](steps/build/11_kernel_bootloader.md) to configure the system, build the
+Guides [10](steps/build/10_system_config.md) and
+[11](steps/build/11_kernel_bootloader.md) explain what step 06 does: configure the system, build the
 kernel, and install GRUB.
 
 ## Other resources

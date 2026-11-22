@@ -45,9 +45,10 @@ bash $FT_DIR/scripts/02_build/02_run_temporary_tools.sh
 sudo bash scripts/02_build/03_enter_chroot.sh
 bash /sources/ft_linux/scripts/02_build/04_run_chroot_tools.sh      # inside chroot
 bash /sources/ft_linux/scripts/02_build/05_run_final_system.sh      # inside chroot
+bash /sources/ft_linux/scripts/02_build/06_run_system_config.sh   # inside chroot: ch. 9-10 (bootscripts, /etc, kernel, GRUB)
 ```
 
-Then configure the system, build the kernel, and install GRUB — see
+Details of every step (what the scripts do and why) are in
 [notes/steps/build/10_system_config.md](notes/steps/build/10_system_config.md)
 and [11_kernel_bootloader.md](notes/steps/build/11_kernel_bootloader.md).
 
@@ -68,16 +69,17 @@ ft_linux/
 ├── README.md           # this file — quick-start + project card
 ├── checksum.txt        # SHA of the final disk image (for peer evaluation)
 ├── wget-list-sysv      # pinned list of every upstream source URL
-├── config/             # ft_linux.conf (login, versions, paths, disk) + fstab, grub.cfg, kernel.config
+├── config/             # ft_linux.conf (login, versions, paths, disk) + kernel.config (kconfig fragment)
 ├── scripts/
 │   ├── lib/common.sh   # loads config/ft_linux.conf (sourced by the scripts)
 │   ├── lfs_disk.sh     # mount | umount | detach | status of the LFS disk/image
 │   ├── sync_to_lfs.sh  # copies scripts/ + config/ to $LFS/sources/ft_linux (lfs user + chroot)
 │   ├── 01_setup/       # host prep + version check, partitioning, env, source download
-│   └── 02_build/       # toolchain → temporary tools → chroot → final system
+│   ├── 02_build/       # toolchain → temporary tools → chroot → final system → 06 system config
+│   └── 03_system/      # ch. 9-10: bootscripts, /etc (fstab, network...), kernel, GRUB
 │       ├── compiler-toolchain/   temporary-tools/
 │       ├── chroot-tools/         final-system/
-│       └── 0{1..5}_run_*.sh      # per-phase orchestrators
+│       └── 0{1..6}_run_*.sh      # per-phase orchestrators
 ├── notes/              # step-by-step guides, cheatsheet, known issues
 │   ├── steps/setup/    notes/steps/build/
 │   ├── cheatsheet.md   issues.md   sources/sources.md

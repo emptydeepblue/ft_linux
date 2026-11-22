@@ -138,6 +138,5 @@ done
 TOTAL=$(( $(date +%s) - TOTAL_START ))
 echo "=== Final system complete in ${TOTAL}s ==="
 echo ""
-echo "Next: System configuration, kernel build, and bootloader (Chapters 9–10)"
-echo "  See notes/steps/build/10_system_config.md"
-echo "  and  notes/steps/build/11_kernel_bootloader.md"
+echo "Next: system configuration, kernel and bootloader (Chapters 9–10):"
+echo "  bash \$FT_DIR/scripts/02_build/06_run_system_config.sh"

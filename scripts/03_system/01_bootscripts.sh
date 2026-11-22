@@ -1,0 +1,13 @@
+#!/bin/bash
+# System 01 — LFS-Bootscripts (LFS 12.4 §9.2)
+# SysV init scripts: /etc/rc.d/init.d/*, rc.site, the rc runlevel links.
+# Run INSIDE the chroot as root.
+set -euo pipefail
+
+echo ">>> LFS-Bootscripts"
+cd /sources
+tar -xf lfs-bootscripts-*.tar.xz
+cd lfs-bootscripts-*/
+make install
+cd /sources && rm -rf lfs-bootscripts-*/
+echo "<<< LFS-Bootscripts done"

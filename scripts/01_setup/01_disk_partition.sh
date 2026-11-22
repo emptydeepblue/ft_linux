@@ -11,7 +11,7 @@
 #                     ($LFS_IMAGE_SIZE) and attaches it with losetup -fP.
 #   LFS_DISK=/dev/sdX -> partitions that block device.
 #
-# Layout (MBR), kept in sync with config/fstab and config/grub.cfg — inside
+# Layout (MBR), kept in sync with VM_*_DEV in config/ft_linux.conf (fstab, grub.cfg) — inside
 # the evaluation VM the disk is /dev/sda:
 #   p1  $BOOT_MIB MiB  ext4  /boot
 #   p2  rest           ext4  /
