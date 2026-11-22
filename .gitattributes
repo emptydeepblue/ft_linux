@@ -1,0 +1,21 @@
+# Normalizza i fine riga: tutto LF nel repo, indipendentemente dal client git.
+* text=auto eol=lf
+
+# Script e configurazioni: sempre LF (CRLF rompe shebang e bash).
+*.sh        text eol=lf
+*.conf      text eol=lf
+*.config    text eol=lf
+*.cfg       text eol=lf
+*.md        text eol=lf
+*.txt       text eol=lf
+fstab       text eol=lf
+wget-list*  text eol=lf
+
+# Binari
+*.pdf    binary
+*.png    binary
+*.jpg    binary
+*.img    binary
+*.vdi    binary
+*.qcow2  binary
+*.tar.*  binary

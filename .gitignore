@@ -1,3 +1,22 @@
 # Exclude proprietary 42 School materials from public distribution
 *.subject.pdf
+
+# Local tooling
 CLAUDE.md
+.claude/
+
+# Windows metadata (files copied from Windows into WSL)
+*:Zone.Identifier
+Thumbs.db
+desktop.ini
+
+# Disk images and build artifacts (huge, never commit)
+*.img
+*.raw
+*.vdi
+*.vmdk
+*.qcow2
+
+# Downloaded sources / logs
+sources/
+*.log
