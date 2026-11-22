@@ -3,8 +3,8 @@
 # Run INSIDE the chroot as root.
 #
 # Usage:
-#   bash /sources/scripts/05_run_final_system.sh        # build all steps
-#   bash /sources/scripts/05_run_final_system.sh 26     # resume from step 26
+#   bash /sources/ft_linux/scripts/02_build/05_run_final_system.sh        # build all steps
+#   bash /sources/ft_linux/scripts/02_build/05_run_final_system.sh 26     # resume from step 26
 #
 # Build order notes:
 #   Step 3  — Python Bootstrap: libffi + Python built early because Glibc 2.39+

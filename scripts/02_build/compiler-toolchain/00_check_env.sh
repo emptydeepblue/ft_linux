@@ -3,6 +3,10 @@
 # Run as lfs user after sourcing ~/.bash_profile
 # Exit 0 = all good, exit 1 = problems found
 
+# Remember whether LFS came from the lfs environment before the config fills it.
+LFS_FROM_ENV="${LFS:-}"
+source "$(dirname "${BASH_SOURCE[0]}")/../../lib/common.sh"
+
 PASS=0
 FAIL=0
 
@@ -26,10 +30,12 @@ fi
 echo ""
 echo "--- Environment ---"
 
-if [ -n "${LFS:-}" ]; then
-    ok "LFS=$LFS"
-else
+if [ -z "$LFS_FROM_ENV" ]; then
     fail "LFS not set — run: source ~/.bash_profile"
+elif [ "$LFS_FROM_ENV" != "$LFS" ]; then
+    fail "LFS=$LFS_FROM_ENV differs from config ($LFS)"
+else
+    ok "LFS=$LFS"
 fi
 
 if [ -n "${LFS_TGT:-}" ]; then
@@ -38,7 +44,7 @@ else
     fail "LFS_TGT not set"
 fi
 
-if echo "$PATH" | grep -q "${LFS:-/mnt/lfs}/tools/bin"; then
+if echo "$PATH" | grep -q "$LFS/tools/bin"; then
     ok "PATH has \$LFS/tools/bin first"
 else
     fail "PATH missing \$LFS/tools/bin — source ~/.bash_profile"
@@ -54,8 +60,6 @@ fi
 
 echo ""
 echo "--- Mounts & disk ---"
-
-LFS="${LFS:-/mnt/lfs}"
 
 if mountpoint -q "$LFS" 2>/dev/null; then
     ok "$LFS is mounted"

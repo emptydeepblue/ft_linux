@@ -10,7 +10,7 @@
 #   (ownership is already root; mounts are lost on reboot so they are re-done)
 set -euo pipefail
 
-LFS="${LFS:-/mnt/lfs}"
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/common.sh"
 
 if [ "$(id -u)" -ne 0 ]; then
     echo "ERROR: must run as root (sudo)."
@@ -64,22 +64,16 @@ fi
 echo "  Done."
 echo ""
 
-# ── 3. Enter chroot ──────────────────────────────────────────────────────────
-
-# ── 3. Copy all build scripts into chroot ────────────────────────────────────
-echo "--- Syncing scripts into chroot ---"
-REPO_SCRIPTS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-mkdir -pv "$LFS/sources/scripts"
-cp -rv "$REPO_SCRIPTS"/. "$LFS/sources/scripts/" > /dev/null
-chmod -R +x "$LFS/sources/scripts/"
-echo "  Done."
+# ── 3. Copy scripts + config into the LFS filesystem ─────────────────────────
+# Inside the chroot they are at /$FT_LFS_SUBDIR (same layout as the repo).
+bash "$FT_ROOT/scripts/sync_to_lfs.sh"
 echo ""
 
 # ── 4. Enter chroot ──────────────────────────────────────────────────────────
 echo "--- Entering chroot ---"
 echo "  You are now inside the LFS environment."
-echo "  Run: bash /sources/scripts/04_run_chroot_tools.sh  (if first entry)"
-echo "  Or start building Chapter 8 packages manually."
+echo "  Run: bash \$FT_DIR/scripts/02_build/04_run_chroot_tools.sh  (first entry)"
+echo "   or: bash \$FT_DIR/scripts/02_build/05_run_final_system.sh"
 echo ""
 
 chroot "$LFS" /usr/bin/env -i        \
@@ -87,5 +81,6 @@ chroot "$LFS" /usr/bin/env -i        \
     TERM="$TERM"                      \
     PS1='(lfs chroot) \u:\w\$ '      \
     PATH=/usr/bin:/usr/sbin           \
-    MAKEFLAGS="-j$(nproc)"            \
+    MAKEFLAGS="-j$JOBS"               \
+    FT_DIR="/$FT_LFS_SUBDIR"          \
     /usr/bin/bash --login

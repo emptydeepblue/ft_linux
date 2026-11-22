@@ -3,8 +3,8 @@
 # Run INSIDE the chroot (after 03_enter_chroot.sh) as root.
 #
 # Usage:
-#   bash /sources/scripts/04_run_chroot_tools.sh        # run all steps
-#   bash /sources/scripts/04_run_chroot_tools.sh 3      # resume from step 3
+#   bash /sources/ft_linux/scripts/02_build/04_run_chroot_tools.sh        # run all steps
+#   bash /sources/ft_linux/scripts/02_build/04_run_chroot_tools.sh 3      # resume from step 3
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

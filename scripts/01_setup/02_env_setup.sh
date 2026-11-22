@@ -3,7 +3,7 @@
 # Run as root on the HOST system.
 set -euo pipefail
 
-LFS="${LFS:-/mnt/lfs}"
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/common.sh"
 
 # ── Guards ───────────────────────────────────────────────────────────────────
 
@@ -28,7 +28,7 @@ echo ""
 
 # ── Directory layout ─────────────────────────────────────────────────────────
 
-echo "[1/4] Creating LFS directory layout..."
+echo "[1/5] Creating LFS directory layout..."
 
 mkdir -pv "$LFS/sources"
 chmod -v  a+wt "$LFS/sources"       # sticky + world-writable (like /tmp)
@@ -50,7 +50,7 @@ echo "      Done."
 
 # ── lfs user ─────────────────────────────────────────────────────────────────
 
-echo "[2/4] Creating lfs user..."
+echo "[2/5] Creating lfs user..."
 
 if ! getent group lfs > /dev/null 2>&1; then
     groupadd lfs
@@ -69,7 +69,7 @@ fi
 
 # ── Ownership ────────────────────────────────────────────────────────────────
 
-echo "[3/4] Setting lfs ownership on LFS directories..."
+echo "[3/5] Setting lfs ownership on LFS directories..."
 
 chown -v lfs "$LFS/tools" "$LFS/sources"
 chown -v lfs "$LFS/usr" "$LFS/usr/bin" "$LFS/usr/lib" "$LFS/usr/sbin"
@@ -83,28 +83,35 @@ echo "      Done."
 
 # ── Shell environment ─────────────────────────────────────────────────────────
 
-echo "[4/4] Writing lfs shell environment..."
+echo "[4/5] Writing lfs shell environment..."
 
 # .bash_profile — starts a clean shell (no inherited host env vars)
 cat > /home/lfs/.bash_profile << 'EOF'
 exec env -i HOME=$HOME TERM=$TERM PS1='\u:\w\$ ' /bin/bash
 EOF
 
-# .bashrc — sets all variables needed for cross-compilation
-cat > /home/lfs/.bashrc << 'EOF'
+# .bashrc — sets all variables needed for cross-compilation.
+# LFS, MAKEFLAGS and FT_DIR are expanded now, from config/ft_linux.conf.
+cat > /home/lfs/.bashrc << EOF
 set +h
 umask 022
-LFS=/mnt/lfs
+LFS=$LFS
 LC_ALL=POSIX
-LFS_TGT=$(uname -m)-lfs-linux-gnu
-PATH=$LFS/tools/bin:/usr/bin:/bin
-CONFIG_SITE=$LFS/usr/share/config.site
-MAKEFLAGS=-j$(nproc)
-export LFS LC_ALL LFS_TGT PATH CONFIG_SITE MAKEFLAGS
+LFS_TGT=\$(uname -m)-lfs-linux-gnu
+PATH=\$LFS/tools/bin:/usr/bin:/bin
+CONFIG_SITE=\$LFS/usr/share/config.site
+MAKEFLAGS=-j$JOBS
+FT_DIR=$FT_LFS_DIR
+export LFS LC_ALL LFS_TGT PATH CONFIG_SITE MAKEFLAGS FT_DIR
 EOF
 
 chown lfs:lfs /home/lfs/.bash_profile /home/lfs/.bashrc
 echo "      Done."
+
+# ── Repo copy readable by lfs and by the chroot ──────────────────────────────
+
+echo "[5/5] Copying scripts and config into $FT_LFS_DIR..."
+bash "$FT_ROOT/scripts/sync_to_lfs.sh"
 
 # ── Verify ───────────────────────────────────────────────────────────────────
 
@@ -126,4 +133,4 @@ echo "Then verify:"
 echo "  echo \$LFS \$LFS_TGT"
 echo "  echo \$PATH"
 echo ""
-echo "Next: sudo su - lfs && bash scripts/01_setup/03_download_sources.sh"
+echo "Next: sudo su - lfs && bash \$FT_DIR/scripts/01_setup/03_download_sources.sh"

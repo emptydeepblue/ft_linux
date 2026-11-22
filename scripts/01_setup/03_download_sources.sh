@@ -1,9 +1,11 @@
 #!/bin/bash
 # 03_download_sources.sh — Download and verify all LFS 12.4 SysV source packages
-# Run as lfs user AFTER sourcing ~/.bash_profile
+# Run as lfs user AFTER sourcing ~/.bash_profile:
+#   bash $FT_DIR/scripts/01_setup/03_download_sources.sh
 set -euo pipefail
 
-LFS_VERSION="12.4"
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/common.sh"
+
 BASE_URL="https://www.linuxfromscratch.org/lfs/downloads/$LFS_VERSION"
 
 # ── Guards ───────────────────────────────────────────────────────────────────
@@ -123,4 +125,4 @@ for name in binutils gcc linux glibc mpfr gmp mpc; do
 done
 
 echo ""
-echo "Next: bash scripts/02_build/01_run_compiler_toolchain.sh"
+echo "Next: bash \$FT_DIR/scripts/02_build/01_run_compiler_toolchain.sh"

@@ -20,3 +20,6 @@ desktop.ini
 # Downloaded sources / logs
 sources/
 *.log
+
+# Machine-specific config overrides
+config/ft_linux.local.conf

@@ -1,16 +1,23 @@
 #!/bin/bash
 # 01_disk_partition.sh — Partition, format, and mount the LFS disk
-# Usage: sudo bash 01_disk_partition.sh [/dev/sdb]
+# Usage: sudo bash 01_disk_partition.sh [/dev/sdX]   (default: LFS_DISK in config)
 # Run as root on the HOST system.
 set -euo pipefail
 
-DISK="${1:-/dev/sdb}"
-LFS="${LFS:-/mnt/lfs}"
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/common.sh"
+
+DISK="${1:-$LFS_DISK}"
 
 # ── Guards ───────────────────────────────────────────────────────────────────
 
 if [ "$(id -u)" -ne 0 ]; then
     echo "ERROR: run as root (sudo bash $0)" >&2
+    exit 1
+fi
+
+if [ -z "$DISK" ]; then
+    echo "ERROR: no disk given and LFS_DISK is empty in config/ft_linux.conf." >&2
+    echo "  Pass a block device: sudo bash $0 /dev/sdX" >&2
     exit 1
 fi
 
@@ -28,9 +35,9 @@ echo ""
 lsblk "$DISK"
 echo ""
 echo "  Layout to create:"
-echo "    ${DISK}1  512M  ext4  → $LFS/boot   (boot partition)"
-echo "    ${DISK}2  rest  ext4  → $LFS        (root filesystem)"
-echo "    ${DISK}3    2G  swap                (swap)"
+echo "    ${DISK}1  ${BOOT_MIB}M  ext4  → $LFS/boot   (boot partition)"
+echo "    ${DISK}2  rest   ext4  → $LFS        (root filesystem)"
+echo "    ${DISK}3  ${SWAP_MIB}M  swap                (swap)"
 echo ""
 read -rp "Partition $DISK? ALL DATA WILL BE LOST. Type 'yes' to continue: " confirm
 [ "$confirm" = "yes" ] || { echo "Aborted."; exit 0; }
@@ -46,8 +53,7 @@ wipefs -a "$DISK" &>/dev/null || true
 # Layout: p1 /boot (512M) · p2 / root (fills the disk minus swap) · p3 swap (~2G).
 # Partition numbers are kept in sync with config/fstab and config/grub.cfg:
 #   /dev/sdaN 1 = /boot, 2 = /, 3 = swap  (inside the VM the disk is /dev/sda).
-BOOT_MIB=512
-SWAP_MIB=2048
+# BOOT_MIB and SWAP_MIB come from config/ft_linux.conf.
 DISK_MIB=$(( $(blockdev --getsize64 "$DISK") / 1024 / 1024 ))
 ROOT_MIB=$(( DISK_MIB - BOOT_MIB - SWAP_MIB - 8 ))   # 8 MiB slack for alignment
 
@@ -111,4 +117,4 @@ swapon --show
 echo ""
 df -h "$LFS" "$LFS/boot"
 echo ""
-echo "Disk ready. Next: sudo bash scripts/01_setup/02_env_setup.sh"
+echo "Disk ready. Next: sudo bash $FT_ROOT/scripts/01_setup/02_env_setup.sh"

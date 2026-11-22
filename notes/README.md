@@ -34,16 +34,16 @@ sudo bash scripts/01_setup/00_version_check.sh
 sudo bash scripts/01_setup/01_disk_partition.sh /dev/sdb
 sudo bash scripts/01_setup/02_env_setup.sh
 sudo su - lfs
-bash scripts/01_setup/03_download_sources.sh
+bash $FT_DIR/scripts/01_setup/03_download_sources.sh
 
 # 2. Toolchain + temporary tools (as lfs; resume from step N with: … <N>)
-bash scripts/02_build/01_run_compiler_toolchain.sh
-bash scripts/02_build/02_run_temporary_tools.sh
+bash $FT_DIR/scripts/02_build/01_run_compiler_toolchain.sh
+bash $FT_DIR/scripts/02_build/02_run_temporary_tools.sh
 
 # 3. Enter chroot (root on host), then build inside it
 sudo bash scripts/02_build/03_enter_chroot.sh
-bash /sources/scripts/04_run_chroot_tools.sh      # inside chroot
-bash /sources/scripts/05_run_final_system.sh      # inside chroot
+bash /sources/ft_linux/scripts/02_build/04_run_chroot_tools.sh      # inside chroot
+bash /sources/ft_linux/scripts/02_build/05_run_final_system.sh      # inside chroot
 ```
 
 Then follow guides [10](steps/build/10_system_config.md) and

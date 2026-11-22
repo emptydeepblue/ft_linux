@@ -19,14 +19,14 @@ sudo bash scripts/02_build/03_enter_chroot.sh
 
 **Inside the chroot** — builds all 7 steps (setup + packages 23–28):
 ```bash
-bash /sources/scripts/04_run_chroot_tools.sh
+bash /sources/ft_linux/scripts/02_build/04_run_chroot_tools.sh
 
 # resume from step N after a failure
-bash /sources/scripts/04_run_chroot_tools.sh <N>
+bash /sources/ft_linux/scripts/02_build/04_run_chroot_tools.sh <N>
 ```
 
-> The scripts are already inside the chroot at `/sources/scripts/` because
-> `03_enter_chroot.sh` copies them there before entering.
+> The scripts and `config/` are already inside the chroot at `/sources/ft_linux/` (same layout as the repo) because
+> `03_enter_chroot.sh` runs `scripts/sync_to_lfs.sh` before entering.
 
 Individual scripts (run inside chroot, in order):
 - [00_setup_dirs.sh](../../scripts/02_build/chroot-tools/00_setup_dirs.sh)
@@ -102,8 +102,7 @@ Expected output includes entries for `/dev`, `/dev/pts`, `/proc`, `/sys`, `/run`
 #### Step C — Copy build scripts into $LFS
 
 ```bash
-mkdir -pv $LFS/sources/scripts
-cp -v scripts/02_build/chroot-tools/*.sh $LFS/sources/scripts/
+sudo bash scripts/sync_to_lfs.sh   # copies scripts/ + config/ to $LFS/sources/ft_linux
 ```
 
 #### Step D — Enter the chroot
@@ -138,7 +137,7 @@ Creates the full FHS directory tree, `/etc/passwd`, `/etc/group`, log files,
 and a minimal login environment.
 
 ```bash
-bash /sources/scripts/00_setup_dirs.sh
+bash /sources/ft_linux/scripts/02_build/chroot-tools/00_setup_dirs.sh
 ```
 
 Or manually:

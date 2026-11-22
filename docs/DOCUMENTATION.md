@@ -452,19 +452,19 @@ sudo bash scripts/01_setup/00_version_check.sh
 sudo bash scripts/01_setup/01_disk_partition.sh /dev/sdb
 sudo bash scripts/01_setup/02_env_setup.sh
 sudo su - lfs
-bash scripts/01_setup/03_download_sources.sh
+bash $FT_DIR/scripts/01_setup/03_download_sources.sh
 
 # ── Stages 1–2: toolchain + temporary tools (as lfs) ──
-bash scripts/02_build/01_run_compiler_toolchain.sh   # resume: … <N>
-bash scripts/02_build/02_run_temporary_tools.sh
+bash $FT_DIR/scripts/02_build/01_run_compiler_toolchain.sh   # resume: … <N>
+bash $FT_DIR/scripts/02_build/02_run_temporary_tools.sh
 
 # ── Stage 3: enter chroot (root on host) ──
 sudo bash scripts/02_build/03_enter_chroot.sh
 # now inside the chroot, as root:
-bash /sources/scripts/04_run_chroot_tools.sh
+bash /sources/ft_linux/scripts/02_build/04_run_chroot_tools.sh
 
 # ── Stage 4: final system (inside chroot) ──
-bash /sources/scripts/05_run_final_system.sh
+bash /sources/ft_linux/scripts/02_build/05_run_final_system.sh
 #   step 25 (shadow) prompts for the root password — interactive
 #   step 26 (gcc) is the longest; resume after with: … 26
 ```

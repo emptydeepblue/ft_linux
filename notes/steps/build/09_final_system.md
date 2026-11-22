@@ -16,10 +16,10 @@ Every package installs directly to `/usr` — no DESTDIR, no cross flags.
 
 ```bash
 # inside the chroot
-bash /sources/scripts/05_run_final_system.sh
+bash /sources/ft_linux/scripts/02_build/05_run_final_system.sh
 
 # resume from step N after a failure
-bash /sources/scripts/05_run_final_system.sh <N>
+bash /sources/ft_linux/scripts/02_build/05_run_final_system.sh <N>
 ```
 
 > **Shadow** is **interactive** — it prompts for the root password.
