@@ -15,10 +15,28 @@ This document covers partitioning, formatting, and mounting the second virtual d
 
 *Scripts*
 - [disk partition](../../scripts/01_setup/01_disk_partition.sh)
+- [lfs_disk.sh](../../scripts/lfs_disk.sh) — mount / umount / detach / status
 
 ```bash
+# Image mode (default, LFS_DISK empty in config/ft_linux.conf) — used on WSL:
+# creates the sparse raw image $LFS_IMAGE (30G), attaches it to a free loop
+# device (losetup -fP → /dev/loopN, partitions /dev/loopNp1..p3).
+sudo bash scripts/01_setup/01_disk_partition.sh
+
+# Block mode — a real second disk (e.g. the original VirtualBox setup below):
 sudo bash scripts/01_setup/01_disk_partition.sh /dev/sdb
+
+# After every WSL / host restart (loop devices and mounts are not persistent):
+sudo bash scripts/lfs_disk.sh mount     # or: umount | detach | status
 ```
+
+> The script does **not** touch the host `/etc/fstab` (an fstab entry for a
+> loop partition would break the host boot). Section 5 below is kept only as
+> background for the manual VirtualBox procedure.
+>
+> At the end the image becomes the evaluation disk: `qemu-img convert -O vdi`.
+> Inside the VM the disk is `/dev/sda`, so p1/p2/p3 → `/dev/sda1..3`, matching
+> `config/fstab` and `config/grub.cfg`.
 
 ---
 
@@ -123,6 +141,10 @@ df -h $LFS $LFS/boot
 ---
 
 ## 5 Make mounts persistent across reboots
+
+> **Not done by the scripts** (and never for image mode): use
+> `sudo bash scripts/lfs_disk.sh mount` after a reboot instead. Manual
+> alternative for a dedicated build VM with a real second disk only:
 
 ```bash
 sudo bash -c 'cat >> /etc/fstab << "EOF"

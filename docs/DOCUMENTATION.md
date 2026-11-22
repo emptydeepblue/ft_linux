@@ -449,7 +449,8 @@ ordering *is* the dependency graph, and breaking it breaks the build.
 ```bash
 # ── Stage 0: host prep (as root, then as the lfs user) ──
 sudo bash scripts/01_setup/host_prepare.sh       # apt deps, sh->bash, version check
-sudo bash scripts/01_setup/01_disk_partition.sh /dev/sdb
+sudo bash scripts/01_setup/01_disk_partition.sh   # image (default) or: … /dev/sdX
+sudo bash scripts/lfs_disk.sh mount               # after every WSL/host restart
 sudo bash scripts/01_setup/02_env_setup.sh
 sudo su - lfs
 bash $FT_DIR/scripts/01_setup/03_download_sources.sh

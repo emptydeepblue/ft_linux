@@ -31,7 +31,8 @@ Build a minimal but functional Linux distribution from source — kernel, toolch
 ```bash
 # 1. Host prep (as root), then download sources (as the lfs user)
 sudo bash scripts/01_setup/host_prepare.sh       # apt deps, sh->bash, version check
-sudo bash scripts/01_setup/01_disk_partition.sh /dev/sdb
+sudo bash scripts/01_setup/01_disk_partition.sh   # image (default) or: … /dev/sdX
+sudo bash scripts/lfs_disk.sh mount               # after every WSL/host restart
 sudo bash scripts/01_setup/02_env_setup.sh
 sudo su - lfs
 bash $FT_DIR/scripts/01_setup/03_download_sources.sh
@@ -70,6 +71,7 @@ ft_linux/
 ├── config/             # ft_linux.conf (login, versions, paths, disk) + fstab, grub.cfg, kernel.config
 ├── scripts/
 │   ├── lib/common.sh   # loads config/ft_linux.conf (sourced by the scripts)
+│   ├── lfs_disk.sh     # mount | umount | detach | status of the LFS disk/image
 │   ├── sync_to_lfs.sh  # copies scripts/ + config/ to $LFS/sources/ft_linux (lfs user + chroot)
 │   ├── 01_setup/       # host prep + version check, partitioning, env, source download
 │   └── 02_build/       # toolchain → temporary tools → chroot → final system

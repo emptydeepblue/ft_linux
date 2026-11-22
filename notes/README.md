@@ -31,7 +31,8 @@ environment sourced (see each guide for who runs what).
 ```bash
 # 1. Host prep (as root), then download sources (as the lfs user)
 sudo bash scripts/01_setup/host_prepare.sh       # apt deps, sh->bash, version check
-sudo bash scripts/01_setup/01_disk_partition.sh /dev/sdb
+sudo bash scripts/01_setup/01_disk_partition.sh   # image (default) or: … /dev/sdX
+sudo bash scripts/lfs_disk.sh mount               # after every WSL/host restart
 sudo bash scripts/01_setup/02_env_setup.sh
 sudo su - lfs
 bash $FT_DIR/scripts/01_setup/03_download_sources.sh
