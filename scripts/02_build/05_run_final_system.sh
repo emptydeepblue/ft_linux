@@ -6,12 +6,15 @@
 #   bash /sources/ft_linux/scripts/02_build/05_run_final_system.sh        # build all steps
 #   bash /sources/ft_linux/scripts/02_build/05_run_final_system.sh 26     # resume from step 26
 #
-# Build order notes:
-#   Step 3  — Python Bootstrap: libffi + Python built early because Glibc 2.39+
-#             requires Python at build time. Both are rebuilt at their normal
-#             positions later in the list.
-#   Step 25 — Shadow: INTERACTIVE — prompts for root password.
-#   Step 26 — GCC: longest build, 30–90 min.
+# Build order = LFS 12.4 SysV chapter 8 (script file numbers are historical;
+# the order below is what counts). Notes:
+#   Glibc needs Python at build time: the temporary Python comes from ch. 7
+#   (chroot-tools/26_python.sh), no bootstrap hack here.
+#   Step 26 — Shadow: INTERACTIVE — prompts for root password.
+#   Step 27 — GCC: longest build, 30–90 min.
+#   Kmod 34 is Meson-only, so it comes after Ninja/Meson (book §8.58).
+#   Check is not in the 12.4 book: kept because the subject lists it.
+#   Eudev replaces the book's "Udev from Systemd" (subject requirement).
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -22,11 +25,12 @@ START="${1:-1}"
 STEPS=(
     "01_man_pages.sh:Man-pages"
     "02_iana_etc.sh:Iana-Etc"
-    "00_bootstrap_python.sh:Python Bootstrap (required by Glibc)"
     "03_glibc.sh:Glibc"
     "04_zlib.sh:Zlib"
     "05_bzip2.sh:Bzip2"
     "06_xz.sh:Xz"
+    "06a_lz4.sh:Lz4"
+    "07_zstd.sh:Zstd"
     "08_file.sh:File"
     "09_readline.sh:Readline"
     "10_m4.sh:M4"
@@ -65,10 +69,16 @@ STEPS=(
     "43_autoconf.sh:Autoconf"
     "44_automake.sh:Automake"
     "45_openssl.sh:OpenSSL"
-    "46_kmod.sh:Kmod"
     "47_libelf.sh:Libelf"
     "48_libffi.sh:Libffi"
     "49_python.sh:Python 3"
+    "50_flit_core.sh:Flit-core"
+    "52a_packaging.sh:Packaging"
+    "51_wheel.sh:Wheel"
+    "52_setuptools.sh:Setuptools"
+    "53_ninja.sh:Ninja"
+    "54_meson.sh:Meson"
+    "46_kmod.sh:Kmod"
     "55_coreutils.sh:Coreutils"
     "56_check.sh:Check"
     "57_diffutils.sh:Diffutils"
@@ -85,6 +95,8 @@ STEPS=(
     "68_tar.sh:Tar"
     "69_texinfo.sh:Texinfo"
     "70_vim.sh:Vim"
+    "71_markupsafe.sh:MarkupSafe"
+    "72_jinja2.sh:Jinja2"
     "73_eudev.sh:Eudev"
     "74_man_db.sh:Man-DB"
     "75_procps.sh:Procps-ng"

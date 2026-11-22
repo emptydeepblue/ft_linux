@@ -5,10 +5,12 @@ Every package installs directly to `/usr` — no DESTDIR, no cross flags.
 
 **All commands run inside the chroot as root** (entered via `03_enter_chroot.sh`).
 
-> **Known deviation from standard LFS order:** Glibc 2.39+ requires Python 3
-> at build time. A Python bootstrap (libffi + Python) is built before Glibc
-> at step 2b, then rebuilt again at their normal positions (steps 48–49).
-> See [Troubleshooting](#troubleshooting) if you encounter other issues.
+> **Order = LFS 12.4 SysV chapter 8.** The authoritative list is `STEPS` in
+> `scripts/02_build/05_run_final_system.sh` (script file numbers are historical).
+> Glibc needs Python at build time: it comes from Chapter 7
+> (`chroot-tools/26_python.sh`), so no bootstrap is needed here.
+> Deviations from the book: Eudev instead of Udev-from-Systemd, Check kept
+> (both required by the subject). Tables below may use the old numbering.
 
 ---
 
@@ -26,7 +28,7 @@ bash /sources/ft_linux/scripts/02_build/05_run_final_system.sh <N>
 > **GCC** is the longest build — expect 30–90 min.
 > If automating, build up to Shadow, set the password, then resume the runner
 > from the GCC step. Pass the step numbers printed by `05_run_final_system.sh`
-> to its resume argument (in that runner: Shadow = 25, GCC = 26).
+> to its resume argument (in that runner: Shadow = 26, GCC = 27).
 
 ---
 
@@ -61,50 +63,6 @@ cd /sources && tar -xf iana-etc-*.tar.gz && cd iana-etc-*/
 cp services protocols /etc/
 cd /sources && rm -rf iana-etc-*/
 ```
-
----
-
-### Step 2b — Python Bootstrap ⚠️ Required before Glibc
-
-Glibc 2.39+ uses Python scripts internally during `make`. Python must exist
-in the chroot before Glibc can be configured. This bootstrap builds libffi
-and Python against the current temporary Glibc — both will be rebuilt again
-at steps 49–50 against the final native Glibc.
-
-```bash
-# check if python3 is already available (skip if yes)
-python3 --version 2>/dev/null && echo "already have python3, skip this step"
-
-# libffi — required by Python's ctypes
-cd /sources && tar -xf libffi-*.tar.gz 2>/dev/null || tar -xf libffi-*.tar.xz
-cd libffi-*/
-./configure --prefix=/usr --disable-static --with-gcc-arch=native
-make && make install
-cd /sources && rm -rf libffi-*/
-
-# Expat — required by Python's pyexpat module (system expat, not bundled)
-cd /sources && tar -xf expat-*.tar.xz && cd expat-*/
-./configure --prefix=/usr --disable-static
-make && make install
-cd /sources && rm -rf expat-*/
-
-# Python 3 minimal bootstrap
-cd /sources && rm -rf Python-*/ && tar -xf Python-*.tar.xz && cd Python-*/
-./configure --prefix=/usr --enable-shared \
-            --with-system-expat --without-ensurepip
-make && make install
-cd /sources && rm -rf Python-*/
-
-python3 --version   # verify before continuing
-```
-
-> If `Python-*.tar.xz` is not in `/sources`, exit the chroot and download it:
-> ```bash
-> sudo wget https://www.python.org/ftp/python/3.12.5/Python-3.12.5.tar.xz \
->      -P /mnt/lfs/sources/
-> sudo wget https://github.com/libffi/libffi/releases/download/v3.4.6/libffi-3.4.6.tar.gz \
->      -P /mnt/lfs/sources/
-> ```
 
 ---
 
@@ -541,10 +499,11 @@ Refer to individual scripts for exact flags. Key notes:
 | 42 | Autoconf | |
 | 43 | Automake | |
 | 44 | OpenSSL | needed for wget/curl (internet connectivity) |
-| 45 | Kmod | |
 | 46 | Libelf | |
-| 47 | Libffi | rebuilt against final Glibc |
-| 48 | Python | rebuilt against final Glibc |
+| 47 | Libffi | `--without-gcc-arch` (no CPU-specific code) |
+| 48 | Python | full build (temporary one from Ch.7) |
+| — | Flit-core, Packaging, Wheel, Setuptools, Ninja, Meson | Python build tools |
+| — | Kmod | Meson-only since kmod 34 → after Meson |
 | 49 | Coreutils | requires `FORCE_UNSAFE_CONFIGURE=1` |
 | 50 | Check | |
 | 51 | Diffutils | |
@@ -732,8 +691,7 @@ ls /usr/lib/*.so* | wc -l    # should be 100+
 | # | Package | Depends on |
 |---|---------|-----------|
 | 1–2 | Man-pages, Iana-Etc | nothing |
-| 2b | **Libffi + Python Bootstrap** | cross-Glibc (already in chroot) |
-| 3 | **Glibc** | Python (2.39+ hard requirement) |
+| 3 | **Glibc** | Python from Ch.7 (2.39+ hard requirement) |
 | 4–6 | Zlib, Bzip2, Xz | Glibc |
 | 8–12 | File, Readline, M4, Bc, Flex | Glibc, Ncurses(Readline) |
 | 12–14 | Tcl, Expect, DejaGNU | test infrastructure |
@@ -743,7 +701,7 @@ ls /usr/lib/*.so* | wc -l    # should be 100+
 | 24 | **Shadow** ⚠️ interactive | Libxcrypt |
 | 25 | **GCC** ⚠️ longest | GMP, MPFR, MPC, Binutils |
 | 26–46 | Ncurses → Libelf (core utilities) | GCC |
-| 47–48 | Libffi, Python (rebuild) | final Glibc |
+| 47–48 | Libffi, Python (full) | final Glibc |
 | 49–65 | Coreutils → Man-DB | various |
 | 66 | **Eudev** | udev-lfs tarball |
 | 67–70 | Man-DB, Procps, Util-linux, E2fsprogs | various |
@@ -781,27 +739,13 @@ All scripts in this repo already apply this fix.
 
 ---
 
-### `fatal error: expat.h: No such file or directory` (Python bootstrap)
-
-**Cause:** Python's `pyexpat` module requires Expat headers. Even without
-`--with-system-expat`, Python 3.12+ fails to locate the bundled headers in
-certain build environments.
-**Fix:** Build Expat before Python in the bootstrap sequence (already corrected
-in the script). If you hit this mid-build, clean up and restart the bootstrap:
-```bash
-cd /sources && rm -rf Python-*/
-# then run the bootstrap steps in order: libffi → expat → python
-```
-
----
-
 ### `configure: error: python missing or too old` (Glibc)
 
 **Package:** Glibc 2.39+  
 **Cause:** Glibc uses Python scripts during `make` to generate internal headers.
 Python must exist in the chroot before Glibc can be built.  
-**Fix:** Build the Python bootstrap (step 2b) before Glibc. See that section above.
-If Python tarballs are missing from `/sources`:
+**Fix:** Python must come from Chapter 7: run `chroot-tools/26_python.sh`
+(or `04_run_chroot_tools.sh 5`). If the Python tarball is missing from `/sources`:
 ```bash
 # exit chroot, run on host as linuxdev
 sudo wget https://www.python.org/ftp/python/3.12.5/Python-3.12.5.tar.xz \

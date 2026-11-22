@@ -7,7 +7,7 @@ tar -xf "$(ls libffi-*.tar.gz | sort -V | tail -1)"
 cd libffi-*/
 ./configure --prefix=/usr          \
             --disable-static       \
-            --with-gcc-arch=native
+            --without-gcc-arch 
 make
 make install
 cd /sources && rm -rf libffi-*/

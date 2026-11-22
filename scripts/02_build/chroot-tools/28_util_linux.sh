@@ -1,5 +1,5 @@
 #!/bin/bash
-# Chroot tools step 27/28 — Util-linux
+# Chroot tools step 28/29 — Util-linux
 # System utilities: mount, fdisk, login, etc.
 # Run INSIDE the chroot as root.
 set -euo pipefail

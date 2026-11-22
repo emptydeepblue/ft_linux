@@ -1,5 +1,5 @@
 #!/bin/bash
-# Chroot tools step 23/28 — Gettext (temporary installation)
+# Chroot tools step 23/29 — Gettext (temporary installation)
 # Only msgfmt, msgmerge, and xgettext are needed at this stage.
 # Run INSIDE the chroot as root.
 set -euo pipefail

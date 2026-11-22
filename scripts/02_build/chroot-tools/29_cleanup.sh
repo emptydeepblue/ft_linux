@@ -1,5 +1,5 @@
 #!/bin/bash
-# Chroot tools step 28/28 — Strip and clean temporary tools
+# Chroot tools step 29/29 — Strip and clean temporary tools
 # Removes debug symbols, .la files, and cross-compiler headers
 # to reclaim ~1 GB before building the final system.
 # Run INSIDE the chroot as root.

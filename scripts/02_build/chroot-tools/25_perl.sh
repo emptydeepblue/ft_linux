@@ -1,5 +1,5 @@
 #!/bin/bash
-# Chroot tools step 25/28 — Perl
+# Chroot tools step 25/29 — Perl
 # Required by Autoconf, Automake, and other Ch.8 build systems.
 # Run INSIDE the chroot as root.
 set -euo pipefail

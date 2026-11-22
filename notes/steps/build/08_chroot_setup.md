@@ -17,7 +17,7 @@ Read the context column carefully before running anything.
 sudo bash scripts/02_build/03_enter_chroot.sh
 ```
 
-**Inside the chroot** — builds all 7 steps (setup + packages 23–28):
+**Inside the chroot** — builds all 8 steps (setup + packages 23–29):
 ```bash
 bash /sources/ft_linux/scripts/02_build/04_run_chroot_tools.sh
 
@@ -33,9 +33,10 @@ Individual scripts (run inside chroot, in order):
 - [23_gettext.sh](../../scripts/02_build/chroot-tools/23_gettext.sh)
 - [24_bison.sh](../../scripts/02_build/chroot-tools/24_bison.sh)
 - [25_perl.sh](../../scripts/02_build/chroot-tools/25_perl.sh)
-- [26_texinfo.sh](../../scripts/02_build/chroot-tools/26_texinfo.sh)
-- [27_util_linux.sh](../../scripts/02_build/chroot-tools/27_util_linux.sh)
-- [28_cleanup.sh](../../scripts/02_build/chroot-tools/28_cleanup.sh)
+- [26_python.sh](../../scripts/02_build/chroot-tools/26_python.sh)
+- [27_texinfo.sh](../../scripts/02_build/chroot-tools/27_texinfo.sh)
+- [28_util_linux.sh](../../scripts/02_build/chroot-tools/28_util_linux.sh)
+- [29_cleanup.sh](../../scripts/02_build/chroot-tools/29_cleanup.sh)
 
 ---
 
@@ -291,7 +292,21 @@ rm -rf perl-*/
 
 ---
 
-### Step 26 — Texinfo
+### Step 26 — Python (temporary)
+
+Glibc and several Chapter 8 packages run Python at build time (LFS 12.4 §7.10).
+The full Python (libffi, expat, optimizations) is rebuilt in Chapter 8.
+
+```bash
+cd /sources && tar -xf Python-*.tar.xz && cd Python-*/
+./configure --prefix=/usr                   --enable-shared                 --without-ensurepip             --without-static-libpython
+make && make install      # warnings about unbuildable modules (ssl, ...) are expected
+cd /sources && rm -rf Python-*/
+```
+
+---
+
+### Step 27 — Texinfo
 
 Documentation system. Required by binutils, GCC, and others during their install.
 
@@ -311,7 +326,7 @@ rm -rf texinfo-*/
 
 ---
 
-### Step 27 — Util-linux
+### Step 28 — Util-linux
 
 Miscellaneous system utilities (`mount`, `fdisk`, `lsblk`, `kill`, etc.).
 Several are disabled because shadow handles login/su in the final system.
@@ -347,7 +362,7 @@ rm -rf util-linux-*/
 
 ---
 
-### Step 28 — Strip and clean
+### Step 29 — Strip and clean
 
 Removes debug symbols, `.la` files, and cross-compiler `include-fixed` headers.
 Reclaims roughly 1 GB before the final build.
@@ -424,8 +439,9 @@ Or just use `03_enter_chroot.sh` — it is idempotent (safe to run multiple time
 | 23 | **Gettext** | `msgfmt`/`msgmerge`/`xgettext` needed by Ch.8 |
 | 24 | **Bison** | parser generator — GCC, Glibc, others |
 | 25 | **Perl** | required by Autoconf, Automake, XML::Parser |
-| 26 | **Texinfo** | `makeinfo` needed during install of several packages |
-| 27 | **Util-linux** | `mount`, `fdisk`, `lsblk`, hardware clock |
-| 28 | **Strip + clean** | reclaim disk space before Chapter 8 |
+| 26 | **Python** | needed at build time by Glibc and others in Ch.8 |
+| 27 | **Texinfo** | `makeinfo` needed during install of several packages |
+| 28 | **Util-linux** | `mount`, `fdisk`, `lsblk`, hardware clock |
+| 29 | **Strip + clean** | reclaim disk space before Chapter 8 |
 
 **Next:** [09 Final System — Chapter 8](09_final_system.md)

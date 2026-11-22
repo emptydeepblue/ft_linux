@@ -112,28 +112,18 @@ wget -qc --show-progress \
 
 ## Step 5: Remove SystemD-Only Packages
 
-These packages are not needed for a SysV build:
+Only the systemd/dbus tarballs are unused (this build uses Eudev + SysVinit).
+**Do not** remove Python, flit_core, packaging, wheel, setuptools, ninja, meson,
+markupsafe, jinja2, zstd, lz4, libxcrypt, openssl or elfutils: the LFS 12.4
+SysV build needs all of them (Python is even required by Glibc).
 
 ```bash
 cd $LFS/sources
 
 rm -fv \
     dbus-*.tar.*              \
-    elfutils-*.tar.*         \
-    flit_core-*.tar.*         \
-    jinja2-*.tar.*            \
-    libxcrypt-*.tar.*         \
-    markupsafe-*.tar.*        \
-    meson-*.tar.*             \
-    ninja-*.tar.*             \
-    openssl-*.tar.*           \
-    packaging-*.tar.*         \
-    python-*-docs-*.tar.*    \
-    Python-*.tar.*            \
-    setuptools-*.tar.*        \
     systemd-*.tar.*           \
     systemd-man-pages-*.tar.* \
-    zstd-*.tar.*              \
     2>/dev/null || true
 ```
 

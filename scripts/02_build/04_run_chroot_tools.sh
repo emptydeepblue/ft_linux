@@ -1,5 +1,5 @@
 #!/bin/bash
-# 04_run_chroot_tools.sh — Build chroot temporary tools (steps 0, 23–28)
+# 04_run_chroot_tools.sh — Build chroot temporary tools (LFS 12.4 ch. 7: steps 0, 23–29)
 # Run INSIDE the chroot (after 03_enter_chroot.sh) as root.
 #
 # Usage:
@@ -8,6 +8,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CT_DIR="$SCRIPT_DIR/chroot-tools"
 
 START="${1:-1}"
 
@@ -16,9 +17,10 @@ STEPS=(
     "23_gettext.sh:Gettext (temporary)"
     "24_bison.sh:Bison"
     "25_perl.sh:Perl"
-    "26_texinfo.sh:Texinfo"
-    "27_util_linux.sh:Util-linux"
-    "28_cleanup.sh:Strip and clean"
+    "26_python.sh:Python (temporary)"
+    "27_texinfo.sh:Texinfo"
+    "28_util_linux.sh:Util-linux"
+    "29_cleanup.sh:Strip and clean"
 )
 
 echo "=== ft_linux Chroot Tools Builder ==="
@@ -43,7 +45,7 @@ for i in "${!STEPS[@]}"; do
     echo "========================================"
     t0=$(date +%s)
 
-    bash "$SCRIPT_DIR/$script"
+    bash "$CT_DIR/$script"
 
     elapsed=$(( $(date +%s) - t0 ))
     echo "  Completed in ${elapsed}s"

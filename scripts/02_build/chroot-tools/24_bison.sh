@@ -1,5 +1,5 @@
 #!/bin/bash
-# Chroot tools step 24/28 — Bison
+# Chroot tools step 24/29 — Bison
 # Parser generator needed by several Ch.8 packages.
 # Run INSIDE the chroot as root.
 set -euo pipefail

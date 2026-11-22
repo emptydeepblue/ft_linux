@@ -1,5 +1,5 @@
 #!/bin/bash
-# Chroot tools step 26/28 — Texinfo
+# Chroot tools step 27/29 — Texinfo
 # Documentation system needed by several Ch.8 packages.
 # Run INSIDE the chroot as root.
 set -euo pipefail

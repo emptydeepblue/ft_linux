@@ -244,9 +244,9 @@ each installing into `/usr`. Highlights:
   `eudev` (device manager), `sysvinit` (init), `sysklogd` (logging),
   `iproute2` (networking), `grub` (bootloader), `kmod` (module loading).
 
-> **Build-order deviation worth knowing:** modern glibc needs Python 3 at build
-> time, so this build bootstraps a throwaway `libffi` + `python` *before* glibc,
-> then rebuilds both at their normal positions later. See
+> **Python before glibc:** modern glibc needs Python 3 at build time. As in
+> the LFS 12.4 book, a temporary Python is built in Chapter 7 (inside the
+> chroot) and the full one in Chapter 8. See
 > [`notes/steps/build/09_final_system.md`](../notes/steps/build/09_final_system.md).
 
 ### Stage 5 — Configuration, kernel & bootloader

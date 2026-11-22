@@ -1,22 +1,18 @@
 #!/bin/bash
-# Final system 46/79 — Kmod
+# Final system — Kmod (LFS 12.4 §8.58). Kmod 34 builds with Meson only,
+# so it runs after Ninja/Meson. Meson installs the depmod/insmod/lsmod/
+# modinfo/modprobe/rmmod links itself; zstd/xz/zlib/openssl are autodetected.
 set -euo pipefail
 echo ">>> Kmod"
 cd /sources
 tar -xf kmod-*.tar.xz
 cd kmod-*/
-./configure --prefix=/usr     \
-            --sysconfdir=/etc  \
-            --with-openssl     \
-            --with-xz          \
-            --with-zstd        \
-            --with-zlib        \
-            --disable-manpages
-make
-make install
-for t in depmod insmod modinfo modprobe rmmod; do
-    ln -sfv ../bin/kmod /usr/sbin/$t
-done
-ln -sfv kmod /usr/bin/lsmod
+mkdir -p build
+cd       build
+meson setup --prefix=/usr ..    \
+            --buildtype=release \
+            -D manpages=false
+ninja
+ninja install
 cd /sources && rm -rf kmod-*/
 echo "<<< Kmod done"
