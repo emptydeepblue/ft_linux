@@ -73,16 +73,20 @@ popd > /dev/null
 
 # ── SysV-specific extras ─────────────────────────────────────────────────────
 
-echo "[4/5] Downloading SysV-specific packages..."
+echo "[4/5] Downloading extra packages (config/extra-sources.list)..."
 
-# Check — unit testing framework (required for Glibc test suite)
-wget -qc --show-progress \
-    "https://github.com/libcheck/check/releases/download/0.15.2/check-0.15.2.tar.gz"
-
-# Eudev — udev replacement for SysV (required for kernel module loading / device management)
-wget -qc --show-progress \
-    "https://github.com/eudev-project/eudev/releases/download/v3.2.14/eudev-3.2.14.tar.gz"
-echo "      Done."
+# Eudev, Check (subject) and the BLFS networking packages (make-ca, wget,
+# dhcpcd...). Each line: URL MD5 ("-" = no published checksum).
+EXTRA_FAILED=0
+while read -r url md5; do
+    case "$url" in ''|\#*) continue ;; esac
+    file="$(basename "$url")"
+    wget -qc --show-progress "$url" -O "$file" || { echo "      FAILED: $url"; EXTRA_FAILED=1; continue; }
+    if [ "$md5" != "-" ] && ! echo "$md5  $file" | md5sum -c --quiet - ; then
+        echo "      CHECKSUM FAILED: $file"; EXTRA_FAILED=1
+    fi
+done < "$FT_ROOT/config/extra-sources.list"
+[ "$EXTRA_FAILED" -eq 0 ] && echo "      Done." || echo "      WARNING: some extra downloads failed (see above)."
 
 # ── Remove SystemD-only packages ─────────────────────────────────────────────
 # The SysV wget-list already excludes most systemd-specific packages; this is a

@@ -1,0 +1,15 @@
+# extra-sources.list — tarballs NOT in the official LFS 12.4 wget-list-sysv.
+# Downloaded and verified by scripts/01_setup/03_download_sources.sh.
+# Format: <URL> <md5 or ->   ("-" = no checksum published)
+
+# Subject requirements not in LFS 12.4
+https://github.com/eudev-project/eudev/releases/download/v3.2.14/eudev-3.2.14.tar.gz -
+https://github.com/libcheck/check/releases/download/0.15.2/check-0.15.2.tar.gz -
+
+# Networking for the evaluation (BLFS 12.4): CA certificates, wget, DHCP
+https://ftp.gnu.org/gnu/libtasn1/libtasn1-4.20.0.tar.gz 930f71d788cf37505a0327c1b84741be
+https://github.com/p11-glue/p11-kit/releases/download/0.25.5/p11-kit-0.25.5.tar.xz e9c5675508fcd8be54aa4c8cb8e794fc
+https://github.com/lfs-book/make-ca/archive/v1.16.1/make-ca-1.16.1.tar.gz bf9cea2d24fc5344d4951b49f275c595
+https://ftp.gnu.org/gnu/wget/wget-1.25.0.tar.gz c70ba58b36f944e8ba1d655ace552881
+https://github.com/NetworkConfiguration/dhcpcd/releases/download/v10.2.4/dhcpcd-10.2.4.tar.xz ce62bc6caf02421ac40135dbb92377b5
+https://anduin.linuxfromscratch.org/BLFS/blfs-bootscripts/blfs-bootscripts-20250225.tar.xz -

@@ -177,4 +177,23 @@ EOF
 
 ---
 
+## Networking for the evaluation (BLFS 12.4)
+
+The evaluation asks the distro to **download sources and install packages**,
+so steps 5–9 of `06_run_system_config.sh` add (tarballs and md5 in
+`config/extra-sources.list`, downloaded with the LFS sources):
+
+| Script | Package | Why |
+|---|---|---|
+| `05_libtasn1.sh` | libtasn1 4.20.0 | needed by p11-kit |
+| `06_p11kit.sh` | p11-kit 0.25.5 | `trust` tool used by make-ca |
+| `07_make_ca.sh` | make-ca 1.16.1 | CA certificates in `/etc/ssl/certs`, `/etc/pki/tls/certs/ca-bundle.crt`. `make-ca -g` downloads Mozilla's `certdata.txt` with `openssl s_client` → **needs network in the chroot** |
+| `08_wget.sh` | Wget 1.25.0 | HTTPS downloads (OpenSSL), smoke test against linuxfromscratch.org |
+| `09_dhcpcd.sh` | dhcpcd 10.2.4 + blfs-bootscripts | DHCP at boot via `/etc/sysconfig/ifconfig.eth0` (`SERVICE=dhcpcd`) |
+
+After boot (VirtualBox NAT, Intel PRO/1000): `ip addr show eth0` should have an
+address, then `wget https://ftp.gnu.org/gnu/hello/hello-2.12.tar.gz` must work.
+
+---
+
 **Next:** [11 Kernel and Bootloader](11_kernel_bootloader.md)

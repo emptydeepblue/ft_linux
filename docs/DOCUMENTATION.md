@@ -426,7 +426,7 @@ ft_linux/
 │       ├── 03_enter_chroot.sh             ──▶ (host: mounts + chroot)
 │       ├── 04_run_chroot_tools.sh         ──▶ chroot-tools/
 │       ├── 05_run_final_system.sh         ──▶ final-system/   (~81 pkgs)
-│       └── 06_run_system_config.sh        ──▶ ../03_system/   (ch. 9-10)
+│       └── 06_run_system_config.sh        ──▶ ../03_system/   (ch. 9-10 + network)
 ├── notes/
 │   ├── cheatsheet.md         # evaluation Q&A — read before defense
 │   ├── issues.md             # problems hit and how they were fixed

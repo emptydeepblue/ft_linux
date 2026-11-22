@@ -26,7 +26,7 @@ EOF
 
 # DHCP on eth0 (VirtualBox NAT). The kernel is booted with net.ifnames=0, so
 # the first NIC is always eth0. SERVICE=dhcpcd needs dhcpcd + its BLFS
-# service script (installed by the network step, plan point 7).
+# service script (installed by 09_dhcpcd.sh).
 install -d /etc/sysconfig
 cat > /etc/sysconfig/ifconfig.eth0 << "EOF"
 ONBOOT=yes
