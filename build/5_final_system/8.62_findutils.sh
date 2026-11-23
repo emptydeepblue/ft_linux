@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Findutils"
 cd /sources
+rm -rf findutils-*/            # leftovers of an interrupted run
 tar -xf findutils-*.tar.xz
 cd findutils-*/
 ./configure --prefix=/usr --localstatedir=/var/lib/locate

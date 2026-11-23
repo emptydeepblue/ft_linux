@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Bash"
 cd /sources
+rm -rf bash-*/            # leftovers of an interrupted run
 tar -xf bash-*.tar.gz
 cd bash-*/
 ./configure --prefix=/usr              \

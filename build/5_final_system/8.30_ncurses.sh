@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Ncurses"
 cd /sources
+rm -rf ncurses-*/            # leftovers of an interrupted run
 tar -xf ncurses-*.tgz
 cd ncurses-*/
 ./configure --prefix=/usr            \

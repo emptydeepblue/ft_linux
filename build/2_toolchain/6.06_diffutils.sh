@@ -8,6 +8,7 @@ set -euo pipefail
 echo ">>> Diffutils"
 
 cd "$LFS/sources"
+rm -rf diffutils-*/            # leftovers of an interrupted run
 tar -xf diffutils-*.tar.xz
 cd diffutils-*/
 

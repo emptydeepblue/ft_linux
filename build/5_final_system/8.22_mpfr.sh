@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> MPFR"
 cd /sources
+rm -rf mpfr-*/            # leftovers of an interrupted run
 tar -xf mpfr-*.tar.xz
 cd mpfr-*/
 ./configure --prefix=/usr        \

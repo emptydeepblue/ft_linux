@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> GDBM"
 cd /sources
+rm -rf gdbm-*/            # leftovers of an interrupted run
 tar -xf gdbm-*.tar.gz
 cd gdbm-*/
 ./configure --prefix=/usr    \

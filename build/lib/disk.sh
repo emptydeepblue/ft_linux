@@ -5,7 +5,8 @@
 #   LFS_DISK=/dev/sdX  block mode: a real (or virtual) disk
 #
 # Only the loop device bound to $LFS_IMAGE is ever touched: other loop
-# devices (e.g. Docker Desktop's /dev/loop0, /dev/loop1) are left alone.
+# devices (e.g. those of Docker Desktop, when it is running) are left alone;
+# the number of ours varies (loop0 if Docker has none, loop2 otherwise).
 
 # Partition N of a disk: /dev/sdb -> /dev/sdb1, /dev/loop3 -> /dev/loop3p1,
 # /dev/nvme0n1 -> /dev/nvme0n1p1 (names ending in a digit get a "p").

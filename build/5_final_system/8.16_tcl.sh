@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Tcl"
 cd /sources
+rm -rf tcl8.*/            # leftovers of an interrupted run
 tar -xf tcl*-src.tar.gz
 cd tcl8.*/
 

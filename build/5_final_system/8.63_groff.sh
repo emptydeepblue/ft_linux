@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Groff"
 cd /sources
+rm -rf groff-*/            # leftovers of an interrupted run
 tar -xf groff-*.tar.gz
 cd groff-*/
 # A4: European paper size (book: PAGE=<paper_size>)

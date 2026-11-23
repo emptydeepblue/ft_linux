@@ -37,7 +37,7 @@ PCnet and virtio-net for the network. Modules (`=m`) would only be loadable
 
 ### No device names: UUID and PARTUUID
 
-The disk is built as `/dev/loop2` and boots as `/dev/sda` — or something else
+The disk is built as a loop device (`/dev/loopN`, the number varies) and boots as `/dev/sda` — or something else
 if the VM is set up differently. So nothing refers to device names:
 
 - `fstab` mounts `/`, `/boot` and swap by **file-system UUID**;
@@ -76,4 +76,4 @@ if the VM is set up differently. So nothing refers to device names:
 - dhcpcd sends the host name (`-h $HOSTNAME`, as in BLFS); the VM's clock is set to UTC.
 - `inittab` compared with the book: identical.
 
-Next: building the disk image for VirtualBox — phase 8 *(to be written)*.
+Next: [Phase 8 — the evaluation disk](8_release.md).

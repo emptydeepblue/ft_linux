@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Bzip2"
 cd /sources
+rm -rf bzip2-*/            # leftovers of an interrupted run
 tar -xf bzip2-*.tar.gz
 cd bzip2-*/
 

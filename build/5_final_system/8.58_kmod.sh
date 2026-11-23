@@ -5,6 +5,7 @@
 set -euo pipefail
 echo ">>> Kmod"
 cd /sources
+rm -rf kmod-*/            # leftovers of an interrupted run
 tar -xf kmod-*.tar.xz
 cd kmod-*/
 mkdir -p build

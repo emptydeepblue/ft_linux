@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Readline"
 cd /sources
+rm -rf readline-*/            # leftovers of an interrupted run
 tar -xf readline-*.tar.gz
 cd readline-*/
 sed -i '/MV.*old/d'       Makefile.in

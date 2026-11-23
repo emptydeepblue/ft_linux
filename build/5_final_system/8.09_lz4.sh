@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Lz4"
 cd /sources
+rm -rf lz4-*/            # leftovers of an interrupted run
 tar -xf lz4-*.tar.gz
 cd lz4-*/
 make BUILD_STATIC=no PREFIX=/usr

@@ -4,6 +4,7 @@
 set -euo pipefail
 echo ">>> Check"
 cd /sources
+rm -rf check-*/            # leftovers of an interrupted run
 tar -xf check-*.tar.gz
 cd check-*/
 ./configure --prefix=/usr --disable-static

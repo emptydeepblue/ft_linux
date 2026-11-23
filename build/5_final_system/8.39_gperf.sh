@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Gperf"
 cd /sources
+rm -rf gperf-*/            # leftovers of an interrupted run
 tar -xf gperf-*.tar.gz
 cd gperf-*/
 ./configure --prefix=/usr \

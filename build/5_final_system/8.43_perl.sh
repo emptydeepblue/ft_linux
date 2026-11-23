@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Perl"
 cd /sources
+rm -rf perl-*/            # leftovers of an interrupted run
 tar -xf perl-*.tar.xz
 cd perl-*/
 

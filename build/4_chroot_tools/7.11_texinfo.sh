@@ -7,6 +7,7 @@ set -euo pipefail
 echo ">>> Texinfo"
 
 cd /sources
+rm -rf texinfo-*/            # leftovers of an interrupted run
 tar -xf texinfo-*.tar.xz
 cd texinfo-*/
 

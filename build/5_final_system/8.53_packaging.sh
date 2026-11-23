@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Packaging"
 cd /sources
+rm -rf packaging-*/            # leftovers of an interrupted run
 tar -xf packaging-*.tar.gz
 cd packaging-*/
 pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD

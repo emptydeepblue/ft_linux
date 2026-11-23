@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Flit-core"
 cd /sources
+rm -rf flit_core-*/            # leftovers of an interrupted run
 tar -xf flit_core-*.tar.gz
 cd flit_core-*/
 pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD

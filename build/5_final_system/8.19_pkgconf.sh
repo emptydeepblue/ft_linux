@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Pkgconf"
 cd /sources
+rm -rf pkgconf-*/            # leftovers of an interrupted run
 tar -xf pkgconf-*.tar.xz
 cd pkgconf-*/
 ./configure --prefix=/usr              \

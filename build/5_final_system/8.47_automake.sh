@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Automake"
 cd /sources
+rm -rf automake-*/            # leftovers of an interrupted run
 tar -xf automake-*.tar.xz
 cd automake-*/
 ./configure --prefix=/usr \

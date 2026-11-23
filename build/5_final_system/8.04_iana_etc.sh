@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Iana-Etc"
 cd /sources
+rm -rf iana-etc-*/            # leftovers of an interrupted run
 tar -xf iana-etc-*.tar.gz
 cd iana-etc-*/
 cp services protocols /etc/

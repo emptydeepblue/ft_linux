@@ -28,7 +28,7 @@ sudo bash build/lfs_disk.sh mount        # only after a WSL/host restart
 | `01_host_prepare.sh` | §2.2 | apt installs the build tools; `sh`→bash, `awk`→gawk, `yacc`→bison (LFS assumes the GNU tools, Ubuntu defaults to dash/mawk); then runs `02`. |
 | `02_version_check.sh` | §2.2 | The book's script, unchanged: every line must say `OK`. |
 | `03_disk_partition.sh` | §2.4–2.7 | Creates the target disk and mounts it on `/mnt/lfs` (see below). |
-| `04_download_sources.sh` | ch. 3 | Downloads the official `wget-list-sysv` 12.4 + [`config/extra-sources.list`](../../config/extra-sources.list) into `$LFS/sources` (mode 1777, like `/tmp`) and checks every md5. Safe to re-run. |
+| `04_download_sources.sh` | ch. 3 | Downloads the official `wget-list-sysv` 12.4 (minus systemd/D-Bus) + [`config/extra-sources.list`](../../config/extra-sources.list) into `$LFS/sources` (mode 1777, like `/tmp`) and checks every md5. A file whose upstream URL is gone, or whose md5 is wrong, is fetched again from the LFS package archive (`LFS_MIRROR`). Fails if anything is still missing. Safe to re-run. |
 | `05_lfs_user.sh` | ch. 4 | Minimal layout (`/usr/{bin,lib,sbin}`, `bin lib sbin` → `usr/*`, `lib64`, `tools`), user `lfs` owning only what it installs into, its clean environment, and a copy of `build/` + `config/` it can read. |
 
 ## The disk

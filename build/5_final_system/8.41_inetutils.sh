@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Inetutils"
 cd /sources
+rm -rf inetutils-*/            # leftovers of an interrupted run
 tar -xf inetutils-*.tar.xz
 cd inetutils-*/
 # Build fix for telnet with recent compilers (book)

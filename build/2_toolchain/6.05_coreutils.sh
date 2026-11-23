@@ -8,6 +8,7 @@ set -euo pipefail
 echo ">>> Coreutils"
 
 cd "$LFS/sources"
+rm -rf coreutils-*/            # leftovers of an interrupted run
 tar -xf coreutils-*.tar.xz
 cd coreutils-*/
 

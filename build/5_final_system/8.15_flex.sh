@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Flex"
 cd /sources
+rm -rf flex-*/            # leftovers of an interrupted run
 tar -xf flex-*.tar.gz
 cd flex-*/
 ./configure --prefix=/usr \

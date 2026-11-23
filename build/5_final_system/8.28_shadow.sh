@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Shadow"
 cd /sources
+rm -rf shadow-*/            # leftovers of an interrupted run
 tar -xf shadow-*.tar.xz
 cd shadow-*/
 

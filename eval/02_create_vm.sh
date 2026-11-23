@@ -19,17 +19,23 @@ set -euo pipefail
 
 VM="${FT_VM_NAME:-ft_linux}"
 CTL="SATA"
-command -v VBoxManage > /dev/null || { echo "ERROR: VBoxManage not found (is VirtualBox installed?)" >&2; exit 1; }
+# VBOXMANAGE: another VBoxManage, e.g. Windows' from WSL (the home test):
+#   VBOXMANAGE="/mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe" bash eval/02_create_vm.sh …
+VBM="${VBOXMANAGE:-VBoxManage}"
+command -v "$VBM" > /dev/null || { echo "ERROR: $VBM not found (is VirtualBox installed?)" >&2; exit 1; }
+vbm() { "$VBM" "$@"; }
+# A Windows VBoxManage.exe needs Windows paths (C:\…), Linux's needs Linux ones.
+hostpath() { case "$VBM" in *.exe) wslpath -w "$1" ;; *) echo "$1" ;; esac; }
 
-vm_exists() { VBoxManage showvminfo "$VM" > /dev/null 2>&1; }
+vm_exists() { vbm showvminfo "$VM" > /dev/null 2>&1; }
 
 if [ "${1:-}" = "--remove" ]; then
     vm_exists || { echo "No VM named $VM."; exit 0; }
-    VBoxManage controlvm "$VM" poweroff > /dev/null 2>&1 || true
+    vbm controlvm "$VM" poweroff > /dev/null 2>&1 || true
     sleep 2
     # Detach first: 'unregistervm --delete' would also delete attached disks.
-    VBoxManage storageattach "$VM" --storagectl "$CTL" --port 0 --device 0 --medium none || true
-    VBoxManage unregistervm "$VM" --delete
+    vbm storageattach "$VM" --storagectl "$CTL" --port 0 --device 0 --medium none || true
+    vbm unregistervm "$VM" --delete
     echo "VM $VM removed. The .vdi file was not touched."
     exit 0
 fi
@@ -45,16 +51,16 @@ if vm_exists; then
 fi
 
 echo "=== Creating VM $VM in $BASE ==="
-VBoxManage createvm --name "$VM" --ostype Linux_64 --basefolder "$BASE" --register
-VBoxManage modifyvm "$VM" \
+vbm createvm --name "$VM" --ostype Linux_64 --basefolder "$(hostpath "$BASE")" --register
+vbm modifyvm "$VM" \
     --firmware bios --memory 2048 --cpus 2 --ioapic on --rtcuseutc on \
     --boot1 disk --boot2 none --boot3 none --boot4 none \
     --nic1 nat --nictype1 82540EM \
     --natpf1 "ssh,tcp,127.0.0.1,2222,,22"
-VBoxManage storagectl "$VM" --name "$CTL" --add sata --controller IntelAhci \
+vbm storagectl "$VM" --name "$CTL" --add sata --controller IntelAhci \
     --portcount 1 --bootable on
-VBoxManage storageattach "$VM" --storagectl "$CTL" --port 0 --device 0 \
-    --type hdd --medium "$VDI" --mtype immutable
+vbm storageattach "$VM" --storagectl "$CTL" --port 0 --device 0 \
+    --type hdd --medium "$(hostpath "$VDI")" --mtype immutable
 
 echo ""
 echo "VM ready. Start it from the VirtualBox window, or:  VBoxManage startvm $VM"
@@ -62,5 +68,5 @@ echo "Then, from this terminal:"
 echo "  ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@localhost"
 
 if [ "${2:-}" = "--start" ]; then
-    VBoxManage startvm "$VM"
+    vbm startvm "$VM"
 fi

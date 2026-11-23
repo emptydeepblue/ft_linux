@@ -8,6 +8,7 @@ set -euo pipefail
 echo ">>> Bash"
 
 cd "$LFS/sources"
+rm -rf bash-*/            # leftovers of an interrupted run
 tar -xf bash-*.tar.gz
 cd bash-*/
 

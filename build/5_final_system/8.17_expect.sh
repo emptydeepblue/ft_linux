@@ -7,6 +7,7 @@ echo ">>> Expect"
 python3 -c 'from pty import spawn; spawn(["echo", "ok"])'
 
 cd /sources
+rm -rf expect*/            # leftovers of an interrupted run
 tar -xf expect*.tar.gz
 cd expect*/
 patch -Np1 -i ../expect-*-gcc15-1.patch

@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Libcap"
 cd /sources
+rm -rf libcap-*/            # leftovers of an interrupted run
 tar -xf libcap-*.tar.xz
 cd libcap-*/
 sed -i '/install -m.*STA/d' libcap/Makefile

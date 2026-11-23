@@ -178,6 +178,7 @@ Each folder of [`build/`](../build/) is one phase, documented in
 | [3–4 chroot](phases/3-4_chroot.md) | ch. 7 | hand `$LFS` to root, enter it with `chroot`, build the last temporary tools |
 | [5_final_system](phases/5_final_system.md) | ch. 8 | every package rebuilt natively, the real system |
 | [6–7 boot, network](phases/6-7_boot_network.md) | ch. 9–10 + BLFS | bootscripts, `/etc`, kernel, GRUB; CA certificates, wget, dhcpcd, ssh |
+| [8_release](phases/8_release.md) | — | boot test in QEMU, shrink, `ft_linux.vdi` + `checksum.txt` |
 
 ---
 

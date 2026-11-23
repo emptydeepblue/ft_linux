@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Intltool"
 cd /sources
+rm -rf intltool-*/            # leftovers of an interrupted run
 tar -xf intltool-*.tar.gz
 cd intltool-*/
 sed -i 's:\\\${:\\\$\\{:' intltool-update.in

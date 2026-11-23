@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Python 3"
 cd /sources
+rm -rf Python-*/            # leftovers of an interrupted run
 tar -xf Python-*.tar.xz
 cd Python-*/
 ./configure --prefix=/usr        \

@@ -8,6 +8,7 @@ set -euo pipefail
 echo ">>> Glibc"
 
 cd "$LFS/sources"
+rm -rf glibc-*/            # leftovers of an interrupted run
 tar -xf glibc-*.tar.xz
 cd glibc-*/
 
@@ -48,20 +49,15 @@ sed '/RTLDLIST=/s@/usr@@g' -i "$LFS/usr/bin/ldd"
 echo ""
 echo "--- Glibc sanity check ---"
 echo 'int main(){}' | "$LFS_TGT-gcc" -xc -
-
-interpreter=$(readelf -l a.out | grep "program interpreter" | grep -o '\[.*\]' || true)
+interpreter="$(readelf -l a.out | grep 'program interpreter' || true)"
 rm -f a.out
-
-echo "  ELF interpreter: $interpreter"
-
-expected="[/lib64/ld-linux-x86-64.so.2]"
-if [ "$interpreter" = "$expected" ]; then
+echo "  $interpreter"
+if [[ "$interpreter" == *": /lib64/ld-linux-x86-64.so.2]" ]]; then
     echo "  OK: interpreter path is correct."
 else
-    echo ""
-    echo "  FATAL: interpreter is '$interpreter', expected '$expected'."
-    echo "  The toolchain is broken. Do NOT continue."
-    echo "  Check that \$LFS, \$LFS_TGT, and Glibc configure flags are correct."
+    echo "FATAL: the ELF interpreter must be /lib64/ld-linux-x86-64.so.2." >&2
+    echo "  The toolchain is broken. Do NOT continue." >&2
+    echo "  Check that \$LFS, \$LFS_TGT, and Glibc configure flags are correct." >&2
     exit 1
 fi
 

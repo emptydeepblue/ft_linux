@@ -4,6 +4,7 @@
 set -euo pipefail
 echo ">>> OpenSSL"
 cd /sources
+rm -rf openssl-*/            # leftovers of an interrupted run
 tar -xf openssl-*.tar.gz
 cd openssl-*/
 ./config --prefix=/usr          \

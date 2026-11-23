@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Gzip"
 cd /sources
+rm -rf gzip-*/            # leftovers of an interrupted run
 tar -xf gzip-*.tar.xz
 cd gzip-*/
 ./configure --prefix=/usr

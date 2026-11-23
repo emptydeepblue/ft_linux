@@ -9,6 +9,7 @@ set -euo pipefail
 echo ">>> Binutils (Pass 2)"
 
 cd "$LFS/sources"
+rm -rf binutils-*/            # leftovers of an interrupted run
 tar -xf binutils-*.tar.xz
 cd binutils-*/
 

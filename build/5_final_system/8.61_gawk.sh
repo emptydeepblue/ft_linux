@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Gawk"
 cd /sources
+rm -rf gawk-*/            # leftovers of an interrupted run
 tar -xf gawk-*.tar.xz
 cd gawk-*/
 sed -i 's/extras//' Makefile.in

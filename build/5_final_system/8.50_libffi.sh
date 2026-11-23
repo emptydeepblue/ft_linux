@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Libffi"
 cd /sources
+rm -rf libffi-*/            # leftovers of an interrupted run
 tar -xf "$(ls libffi-*.tar.gz | sort -V | tail -1)"
 cd libffi-*/
 ./configure --prefix=/usr          \

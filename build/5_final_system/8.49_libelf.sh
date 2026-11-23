@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Libelf"
 cd /sources
+rm -rf elfutils-*/            # leftovers of an interrupted run
 tar -xf elfutils-*.tar.bz2
 cd elfutils-*/
 ./configure --prefix=/usr                \

@@ -8,6 +8,7 @@ set -euo pipefail
 echo ">>> Python (temporary)"
 
 cd /sources
+rm -rf Python-*/            # leftovers of an interrupted run
 tar -xf Python-*.tar.xz
 cd Python-*/
 

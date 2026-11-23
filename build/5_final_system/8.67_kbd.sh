@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Kbd"
 cd /sources
+rm -rf kbd-*/            # leftovers of an interrupted run
 tar -xf kbd-*.tar.xz
 cd kbd-*/
 patch -Np1 -i ../kbd-*-backspace-1.patch

@@ -21,3 +21,4 @@ and why, and links to it. How to run everything, in order: [README](../README.md
 | [3-4_chroot](phases/3-4_chroot.md) | `3_chroot/`, `4_chroot_tools/` | ch. 7 |
 | [5_final_system](phases/5_final_system.md) | `5_final_system/` | ch. 8 |
 | [6-7_boot_network](phases/6-7_boot_network.md) | `6_boot/`, `7_network/` | ch. 9–10, BLFS |
+| [8_release](phases/8_release.md) | `8_release/` | — (test, `.vdi`, checksum) |

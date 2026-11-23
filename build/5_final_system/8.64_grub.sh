@@ -4,6 +4,7 @@
 set -euo pipefail
 echo ">>> GRUB"
 cd /sources
+rm -rf grub-*/            # leftovers of an interrupted run
 tar -xf grub-*.tar.xz
 cd grub-*/
 

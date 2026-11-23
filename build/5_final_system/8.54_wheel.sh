@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Wheel"
 cd /sources
+rm -rf wheel-*/            # leftovers of an interrupted run
 tar -xf wheel-*.tar.gz
 cd wheel-*/
 pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD

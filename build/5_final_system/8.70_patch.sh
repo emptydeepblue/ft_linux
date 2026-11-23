@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Patch"
 cd /sources
+rm -rf patch-*/            # leftovers of an interrupted run
 tar -xf patch-*.tar.xz
 cd patch-*/
 ./configure --prefix=/usr

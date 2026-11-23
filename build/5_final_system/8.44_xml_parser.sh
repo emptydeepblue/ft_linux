@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> XML::Parser"
 cd /sources
+rm -rf XML-Parser-*/            # leftovers of an interrupted run
 tar -xf XML-Parser-*.tar.gz
 cd XML-Parser-*/
 perl Makefile.PL

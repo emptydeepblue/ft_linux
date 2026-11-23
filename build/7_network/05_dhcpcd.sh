@@ -18,6 +18,7 @@ id dhcpcd > /dev/null 2>&1 || \
 chown -v dhcpcd:dhcpcd /var/lib/dhcpcd
 
 cd /sources
+rm -rf dhcpcd-*/            # leftovers of an interrupted run
 tar -xf dhcpcd-*.tar.xz
 cd dhcpcd-*/
 ./configure --prefix=/usr                \

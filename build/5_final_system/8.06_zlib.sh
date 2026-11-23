@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Zlib"
 cd /sources
+rm -rf zlib-*/            # leftovers of an interrupted run
 tar -xf zlib-*.tar.gz
 cd zlib-*/
 ./configure --prefix=/usr

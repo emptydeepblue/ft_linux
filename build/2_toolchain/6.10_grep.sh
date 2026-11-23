@@ -8,6 +8,7 @@ set -euo pipefail
 echo ">>> Grep"
 
 cd "$LFS/sources"
+rm -rf grep-*/            # leftovers of an interrupted run
 tar -xf grep-*.tar.xz
 cd grep-*/
 

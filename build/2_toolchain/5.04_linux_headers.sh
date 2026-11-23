@@ -9,6 +9,7 @@ echo ">>> Linux API Headers"
 mkdir -pv "$LFS/usr/include"
 
 cd "$LFS/sources"
+rm -rf linux-*/            # leftovers of an interrupted run
 tar -xf linux-*.tar.xz
 cd linux-*/
 

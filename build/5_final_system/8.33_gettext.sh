@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Gettext"
 cd /sources
+rm -rf gettext-*/            # leftovers of an interrupted run
 tar -xf gettext-*.tar.xz
 cd gettext-*/
 ./configure --prefix=/usr    \

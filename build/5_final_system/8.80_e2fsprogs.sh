@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> E2fsprogs"
 cd /sources
+rm -rf e2fsprogs-*/            # leftovers of an interrupted run
 tar -xf e2fsprogs-*.tar.gz
 cd e2fsprogs-*/
 mkdir -v build && cd build

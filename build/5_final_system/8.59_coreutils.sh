@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Coreutils"
 cd /sources
+rm -rf coreutils-*/            # leftovers of an interrupted run
 tar -xf coreutils-*.tar.xz
 cd coreutils-*/
 patch -Np1 -i ../coreutils-*-upstream_fix-1.patch

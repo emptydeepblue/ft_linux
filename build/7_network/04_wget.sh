@@ -6,6 +6,7 @@
 set -euo pipefail
 echo ">>> Wget"
 cd /sources
+rm -rf wget-*/            # leftovers of an interrupted run
 tar -xf wget-*.tar.gz
 cd wget-*/
 ./configure --prefix=/usr      \

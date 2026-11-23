@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Less"
 cd /sources
+rm -rf less-*/            # leftovers of an interrupted run
 tar -xf less-*.tar.gz
 cd less-*/
 ./configure --prefix=/usr --sysconfdir=/etc

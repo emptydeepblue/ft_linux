@@ -17,6 +17,7 @@ id sshd > /dev/null 2>&1 || \
             -u 50 sshd
 
 cd /sources
+rm -rf openssh-*/            # leftovers of an interrupted run
 tar -xf openssh-*.tar.gz
 cd openssh-*/
 ./configure --prefix=/usr                            \

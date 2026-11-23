@@ -7,6 +7,7 @@ set -euo pipefail
 echo ">>> Gettext (temporary)"
 
 cd /sources
+rm -rf gettext-*/            # leftovers of an interrupted run
 tar -xf gettext-*.tar.xz
 cd gettext-*/
 

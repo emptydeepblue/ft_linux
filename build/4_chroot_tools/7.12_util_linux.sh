@@ -7,6 +7,7 @@ set -euo pipefail
 echo ">>> Util-linux"
 
 cd /sources
+rm -rf util-linux-*/            # leftovers of an interrupted run
 tar -xf util-linux-*.tar.xz
 cd util-linux-*/
 

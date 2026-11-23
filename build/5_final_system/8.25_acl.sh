@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Acl"
 cd /sources
+rm -rf acl-*/            # leftovers of an interrupted run
 tar -xf acl-*.tar.xz
 cd acl-*/
 ./configure --prefix=/usr         \

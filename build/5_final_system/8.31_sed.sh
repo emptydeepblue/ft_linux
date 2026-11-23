@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Sed"
 cd /sources
+rm -rf sed-*/            # leftovers of an interrupted run
 tar -xf sed-*.tar.xz
 cd sed-*/
 ./configure --prefix=/usr

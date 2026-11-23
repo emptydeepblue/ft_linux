@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> IPRoute2"
 cd /sources
+rm -rf iproute2-*/            # leftovers of an interrupted run
 tar -xf iproute2-*.tar.xz
 cd iproute2-*/
 sed -i /ARPD/d Makefile

@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Bison"
 cd /sources
+rm -rf bison-*/            # leftovers of an interrupted run
 tar -xf bison-*.tar.xz
 cd bison-*/
 ./configure --prefix=/usr \

@@ -4,6 +4,7 @@
 set -euo pipefail
 echo ">>> libtasn1"
 cd /sources
+rm -rf libtasn1-*/            # leftovers of an interrupted run
 tar -xf libtasn1-*.tar.gz
 cd libtasn1-*/
 ./configure --prefix=/usr --disable-static

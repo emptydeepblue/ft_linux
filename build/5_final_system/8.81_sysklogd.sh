@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Sysklogd"
 cd /sources
+rm -rf sysklogd-*/            # leftovers of an interrupted run
 tar -xf sysklogd-*.tar.gz
 cd sysklogd-*/
 ./configure --prefix=/usr      \

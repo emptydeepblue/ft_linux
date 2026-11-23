@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Zstd"
 cd /sources
+rm -rf zstd-*/            # leftovers of an interrupted run
 tar -xf zstd-*.tar.gz
 cd zstd-*/
 make prefix=/usr

@@ -8,6 +8,7 @@
 set -euo pipefail
 echo ">>> Eudev"
 cd /sources
+rm -rf eudev-*/            # leftovers of an interrupted run
 tar -xf eudev-*.tar.gz
 cd eudev-*/
 

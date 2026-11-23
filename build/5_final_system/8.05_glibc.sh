@@ -5,6 +5,7 @@
 set -euo pipefail
 echo ">>> Glibc"
 cd /sources
+rm -rf glibc-*/            # leftovers of an interrupted run
 tar -xf glibc-*.tar.xz
 cd glibc-*/
 

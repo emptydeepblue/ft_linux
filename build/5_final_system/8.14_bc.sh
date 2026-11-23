@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Bc"
 cd /sources
+rm -rf bc-*/            # leftovers of an interrupted run
 tar -xf bc-*.tar.xz
 cd bc-*/
 CC='gcc -std=c99' ./configure --prefix=/usr -G -O3 -r

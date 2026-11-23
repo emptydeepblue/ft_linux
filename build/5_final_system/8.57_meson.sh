@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Meson"
 cd /sources
+rm -rf meson-*/            # leftovers of an interrupted run
 tar -xf meson-*.tar.gz
 cd meson-*/
 pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD

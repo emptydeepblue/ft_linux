@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Libxcrypt"
 cd /sources
+rm -rf libxcrypt-*/            # leftovers of an interrupted run
 tar -xf libxcrypt-*.tar.xz
 cd libxcrypt-*/
 ./configure --prefix=/usr                \

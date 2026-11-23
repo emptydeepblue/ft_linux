@@ -7,6 +7,7 @@
 set -euo pipefail
 echo ">>> make-ca"
 cd /sources
+rm -rf make-ca-*/            # leftovers of an interrupted run
 tar -xf make-ca-*.tar.gz
 cd make-ca-*/
 make install

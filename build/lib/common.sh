@@ -30,7 +30,7 @@ fi
 # Copy of the repo inside the LFS filesystem, as seen from the host.
 FT_LFS_DIR="$LFS/$FT_LFS_SUBDIR"
 
-export FT_ROOT FT_LOGIN FT_HOSTNAME LFS_VERSION KVER KERNEL_RELEASE \
+export FT_ROOT FT_LOGIN FT_HOSTNAME LFS_VERSION LFS_MIRROR KVER KERNEL_RELEASE \
        LFS JOBS FT_LFS_SUBDIR FT_LFS_DIR
 
 # ── Who / where guards (each phase runs as a given user, in a given place) ───

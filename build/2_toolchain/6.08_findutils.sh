@@ -8,6 +8,7 @@ set -euo pipefail
 echo ">>> Findutils"
 
 cd "$LFS/sources"
+rm -rf findutils-*/            # leftovers of an interrupted run
 tar -xf findutils-*.tar.xz
 cd findutils-*/
 

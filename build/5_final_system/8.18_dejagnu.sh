@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> DejaGNU"
 cd /sources
+rm -rf dejagnu-*/            # leftovers of an interrupted run
 tar -xf dejagnu-*.tar.gz
 cd dejagnu-*/
 mkdir build && cd build

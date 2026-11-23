@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Man-pages"
 cd /sources
+rm -rf man-pages-*/            # leftovers of an interrupted run
 tar -xf man-pages-*.tar.xz
 cd man-pages-*/
 rm -v man3/crypt*                  # Libxcrypt provides better ones

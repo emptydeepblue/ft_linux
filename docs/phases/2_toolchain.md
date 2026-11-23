@@ -12,7 +12,9 @@ bash $FT_DIR/build/2_toolchain/run.sh 6.10     # resume at Grep after a failure
 
 `run.sh` first runs [`check_env.sh`](../../build/2_toolchain/check_env.sh)
 (user, variables, mounts, free space, tarballs, host compiler), then every
-step in book order. Logs: `$LFS/sources/logs/2_toolchain/`.
+step in book order. Logs: `$LFS/sources/logs/2_toolchain/`. After a failure,
+fix the cause and resume at that section: each script first removes what an
+interrupted run left in `$LFS/sources`.
 
 ## Why two chapters
 

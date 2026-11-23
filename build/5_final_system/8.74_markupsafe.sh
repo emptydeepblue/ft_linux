@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> MarkupSafe"
 cd /sources
+rm -rf markupsafe-*/            # leftovers of an interrupted run
 tar -xf markupsafe-*.tar.gz
 cd markupsafe-*/
 pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD

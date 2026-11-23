@@ -59,7 +59,13 @@ sudo bash build/3_chroot/02_enter_chroot.sh     # every time you (re)enter
 bash $FT_DIR/build/4_chroot_tools/run.sh        # ch. 7.5–7.13
 bash $FT_DIR/build/5_final_system/run.sh        # ch. 8, unattended (hours)
 bash $FT_DIR/build/6_boot/run.sh                # ch. 9–10: bootscripts, /etc, kernel, GRUB, root password
-bash $FT_DIR/build/7_network/run.sh             # BLFS: CA certificates, wget, dhcpcd
+bash $FT_DIR/build/7_network/run.sh             # BLFS: CA certificates, wget, dhcpcd, ssh
+
+# 8_release — on the host, chroot exited: test, shrink, .vdi + checksum
+sudo bash build/lfs_disk.sh detach
+bash build/8_release/01_boot_test.sh            # QEMU, no sudo, image untouched
+sudo bash build/lfs_disk.sh mount && sudo bash build/8_release/02_prepare_image.sh
+sudo bash build/lfs_disk.sh detach && sudo bash build/8_release/03_make_vdi.sh
 ```
 
 What every phase does and why: [docs/](docs/README.md), one page per folder of `build/`.
@@ -91,7 +97,8 @@ ft_linux/
 │   ├── 4_chroot_tools/ # [root, chroot] run.sh: 7.05–7.13 dirs, files, extra temporary tools
 │   ├── 5_final_system/ # [root, chroot] run.sh: 8.03–8.82, file name = book section
 │   ├── 6_boot/         # [root, chroot] run.sh: bootscripts, /etc, kernel, GRUB (ch. 9–10)
-│   └── 7_network/      # [root, chroot] run.sh: libtasn1, p11-kit, make-ca, wget, dhcpcd (BLFS)
+│   ├── 7_network/      # [root, chroot] run.sh: libtasn1, p11-kit, make-ca, wget, dhcpcd, openssh (BLFS)
+│   └── 8_release/      # [host]         QEMU boot test, shrink, .vdi + checksum.txt + .vdi.xz
 └── docs/               # concepts, one page per build phase, packages, cheatsheet, issues
 ```
 
@@ -133,7 +140,7 @@ ft_linux/
 ## 🔗 References
 
 - [Documentation](docs/README.md) — concepts, phases, packages
-- [Linux From Scratch (LFS)](https://www.linuxfromscratch.org/)
+- [Linux From Scratch (LFS)](https://www.linuxfromscratch.org/lfs/view/stable/index.html)
 - [Filesystem Hierarchy Standard](https://refspecs.linuxfoundation.org/fhs.shtml)
 - [Software-Building HOWTO](https://tldp.org/HOWTO/Software-Building-HOWTO.html)
 - [kernel.org](https://www.kernel.org/)

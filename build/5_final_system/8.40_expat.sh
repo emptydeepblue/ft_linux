@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Expat"
 cd /sources
+rm -rf expat-*/            # leftovers of an interrupted run
 tar -xf expat-*.tar.xz
 cd expat-*/
 ./configure --prefix=/usr    \

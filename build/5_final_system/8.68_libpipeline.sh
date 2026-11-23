@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Libpipeline"
 cd /sources
+rm -rf libpipeline-*/            # leftovers of an interrupted run
 tar -xf libpipeline-*.tar.gz
 cd libpipeline-*/
 ./configure --prefix=/usr

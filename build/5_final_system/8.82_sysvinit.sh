@@ -4,6 +4,7 @@
 set -euo pipefail
 echo ">>> Sysvinit"
 cd /sources
+rm -rf sysvinit-*/            # leftovers of an interrupted run
 tar -xf sysvinit-*.tar.xz
 cd sysvinit-*/
 patch -Np1 -i ../sysvinit-*-consolidated-1.patch

@@ -8,6 +8,7 @@ set -euo pipefail
 echo ">>> Gzip"
 
 cd "$LFS/sources"
+rm -rf gzip-*/            # leftovers of an interrupted run
 tar -xf gzip-*.tar.xz
 cd gzip-*/
 

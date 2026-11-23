@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Vim"
 cd /sources
+rm -rf vim-*/            # leftovers of an interrupted run
 tar -xf vim-*.tar.gz
 cd vim-*/
 echo '#define SYS_VIMRC_FILE "/etc/vimrc"' >> src/feature.h

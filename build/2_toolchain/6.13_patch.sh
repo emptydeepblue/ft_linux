@@ -8,6 +8,7 @@ set -euo pipefail
 echo ">>> Patch"
 
 cd "$LFS/sources"
+rm -rf patch-*/            # leftovers of an interrupted run
 tar -xf patch-*.tar.xz
 cd patch-*/
 

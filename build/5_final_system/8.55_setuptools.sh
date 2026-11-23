@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Setuptools"
 cd /sources
+rm -rf setuptools-*/            # leftovers of an interrupted run
 tar -xf setuptools-*.tar.gz
 cd setuptools-*/
 pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD

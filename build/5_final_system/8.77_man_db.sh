@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Man-DB"
 cd /sources
+rm -rf man-db-*/            # leftovers of an interrupted run
 tar -xf man-db-*.tar.xz
 cd man-db-*/
 ./configure --prefix=/usr                        \

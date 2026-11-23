@@ -8,6 +8,7 @@ set -euo pipefail
 echo ">>> Gawk"
 
 cd "$LFS/sources"
+rm -rf gawk-*/            # leftovers of an interrupted run
 tar -xf gawk-*.tar.xz
 cd gawk-*/
 

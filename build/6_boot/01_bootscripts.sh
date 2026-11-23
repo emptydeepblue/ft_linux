@@ -6,6 +6,7 @@ set -euo pipefail
 
 echo ">>> LFS-Bootscripts"
 cd /sources
+rm -rf lfs-bootscripts-*/            # leftovers of an interrupted run
 tar -xf lfs-bootscripts-*.tar.xz
 cd lfs-bootscripts-*/
 make install

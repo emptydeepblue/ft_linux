@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Libtool"
 cd /sources
+rm -rf libtool-*/            # leftovers of an interrupted run
 tar -xf libtool-*.tar.xz
 cd libtool-*/
 ./configure --prefix=/usr

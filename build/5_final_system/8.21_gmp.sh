@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> GMP"
 cd /sources
+rm -rf gmp-*/            # leftovers of an interrupted run
 tar -xf gmp-*.tar.xz
 cd gmp-*/
 

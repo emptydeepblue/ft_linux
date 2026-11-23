@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Binutils"
 cd /sources
+rm -rf binutils-*/            # leftovers of an interrupted run
 tar -xf binutils-*.tar.xz
 cd binutils-*/
 mkdir -v build && cd build

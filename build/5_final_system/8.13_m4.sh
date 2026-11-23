@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> M4"
 cd /sources
+rm -rf m4-*/            # leftovers of an interrupted run
 tar -xf m4-*.tar.xz
 cd m4-*/
 ./configure --prefix=/usr

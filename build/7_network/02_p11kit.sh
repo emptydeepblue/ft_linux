@@ -4,6 +4,7 @@
 set -euo pipefail
 echo ">>> p11-kit"
 cd /sources
+rm -rf p11-kit-*/            # leftovers of an interrupted run
 tar -xf p11-kit-*.tar.xz
 cd p11-kit-*/
 

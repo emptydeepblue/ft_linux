@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Ninja"
 cd /sources
+rm -rf ninja-*/            # leftovers of an interrupted run
 tar -xf ninja-*.tar.gz
 cd ninja-*/
 export NINJAJOBS=$(nproc)

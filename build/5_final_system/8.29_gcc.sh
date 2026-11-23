@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> GCC"
 cd /sources
+rm -rf gcc-*/            # leftovers of an interrupted run
 tar -xf gcc-*.tar.xz
 cd gcc-*/
 

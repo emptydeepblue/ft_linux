@@ -8,6 +8,7 @@ set -euo pipefail
 echo ">>> Tar"
 
 cd "$LFS/sources"
+rm -rf tar-*/            # leftovers of an interrupted run
 tar -xf tar-*.tar.xz
 cd tar-*/
 

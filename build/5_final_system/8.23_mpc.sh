@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> MPC"
 cd /sources
+rm -rf mpc-*/            # leftovers of an interrupted run
 tar -xf mpc-*.tar.gz
 cd mpc-*/
 ./configure --prefix=/usr    \

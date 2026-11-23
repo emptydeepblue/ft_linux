@@ -3,6 +3,7 @@
 set -euo pipefail
 echo ">>> Attr"
 cd /sources
+rm -rf attr-*/            # leftovers of an interrupted run
 tar -xf attr-*.tar.gz
 cd attr-*/
 ./configure --prefix=/usr     \

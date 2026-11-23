@@ -8,6 +8,7 @@ set -euo pipefail
 echo ">>> GCC (Pass 1)"
 
 cd "$LFS/sources"
+rm -rf gcc-*/            # leftovers of an interrupted run
 tar -xf gcc-*.tar.xz
 cd gcc-*/
 
