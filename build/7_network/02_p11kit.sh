@@ -1,0 +1,33 @@
+#!/bin/bash
+# Network step — p11-kit (BLFS 12.4) — trust store tooling used by make-ca.
+# Run INSIDE the chroot as root.
+set -euo pipefail
+echo ">>> p11-kit"
+cd /sources
+tar -xf p11-kit-*.tar.xz
+cd p11-kit-*/
+
+# Make "update-ca-certificates"/trust anchor changes go through make-ca.
+sed '20,$ d' -i trust/trust-extract-compat
+cat >> trust/trust-extract-compat << "EOF"
+# Copy existing anchor modifications to /etc/ssl/local
+/usr/libexec/make-ca/copy-trust-modifications
+
+# Update trust stores
+/usr/sbin/make-ca -r
+EOF
+
+mkdir p11-build
+cd    p11-build
+meson setup ..            \
+      --prefix=/usr       \
+      --buildtype=release \
+      -D trust_paths=/etc/pki/anchors
+ninja
+ninja install
+ln -sfv /usr/libexec/p11-kit/trust-extract-compat \
+        /usr/bin/update-ca-certificates
+ln -sfv ./pkcs11/p11-kit-trust.so /usr/lib/libnssckbi.so
+
+cd /sources && rm -rf p11-kit-*/
+echo "<<< p11-kit done"

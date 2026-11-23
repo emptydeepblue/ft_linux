@@ -3,9 +3,9 @@
 Build a minimal but functional Linux distribution from source — kernel, toolchain, init system, and userspace — following the Linux From Scratch (LFS) methodology.
 
 **Specialization:** Unix/Kernel
-**XP:** 4,200 · **People:** 1 · **Status:** 🟦 Completed
+**XP:** 4,200 · **People:** 1 · **Status:** 🟨 In progress (scripts written, full build not yet run)
 
-> 📖 **New here?** Read [docs/DOCUMENTATION.md](docs/DOCUMENTATION.md) — a full
+> 📖 **New here?** Read [docs/concepts.md](docs/concepts.md) — a full
 > walkthrough of the project and every concept behind it (toolchain bootstrapping,
 > chroot, the boot chain, FHS, init, eudev, GRUB…). This README is the quick-start.
 
@@ -18,49 +18,59 @@ Build a minimal but functional Linux distribution from source — kernel, toolch
 - FHS-compliant root filesystem
 - GRUB bootloader, SysVinit init, eudev device manager
 - Network connectivity, package management primitives, working shell environment
-- Reproducible build: every step scripted in `scripts/`
+- Reproducible build: every step scripted in `build/`
 
-## 🛠️ Build & Run
+## Two separate worlds
 
-**Prerequisites:**
-- VirtualBox / VMware
-- x86_64 host CPU, ≥ 4 cores recommended
-- ≥ 8 GB RAM, ≥ 30 GB disk for the LFS build environment
-- Host satisfies LFS `version-check.sh`
+| | Where | Needs | Folder |
+|---|---|---|---|
+| **Build** the disk image | a Linux host with sudo (here: WSL2, Ubuntu 22.04) | hours of compiling | [`build/`](build/), [`config/`](config/) |
+| **Evaluate** it | a school PC (Ubuntu 22.04 + VirtualBox) | no sudo, no compiling | [`eval/`](eval/README.md) |
+
+## 🛠️ Build
+
+**Prerequisites:** an Ubuntu 22.04 host with sudo (see
+[docs/phases/1_host.md](docs/phases/1_host.md)),
+x86_64, ≥ 4 cores, ≥ 8 GB RAM, ≥ 40 GB free disk.
 
 ```bash
-# 1. Host prep (as root), then download sources (as the lfs user)
-sudo bash scripts/01_setup/host_prepare.sh       # apt deps, sh->bash, version check
-sudo bash scripts/01_setup/01_disk_partition.sh   # image (default) or: … /dev/sdX
-sudo bash scripts/lfs_disk.sh mount               # after every WSL/host restart
-sudo bash scripts/01_setup/02_env_setup.sh
+# Each folder of build/ is one phase; its header says WHO runs it and WHERE.
+# Phases with a run.sh are resumable:  run.sh --list | run.sh FROM [TO]
+# (FROM/TO = LFS book section, e.g. "8.29" = GCC, "5 5" = only chapter 5).
+# Logs: $LFS/sources/logs/<phase>/<step>.log
+
+# 1_host — root on the host, one script at a time (LFS ch. 2–4)
+sudo bash build/1_host/01_host_prepare.sh       # apt deps, sh->bash, runs 02_version_check
+sudo bash build/1_host/03_disk_partition.sh     # raw image (default) or: … /dev/sdX
+sudo bash build/1_host/04_download_sources.sh   # into $LFS/sources, md5 checked
+sudo bash build/1_host/05_lfs_user.sh           # lfs user + env + copy of scripts
+sudo bash build/lfs_disk.sh mount               # only after a WSL/host restart
+
+# 2_toolchain — user lfs on the host (ch. 5 cross-toolchain, ch. 6 temporary tools)
 sudo su - lfs
-bash $FT_DIR/scripts/01_setup/03_download_sources.sh
+bash $FT_DIR/build/2_toolchain/run.sh
+exit
 
-# 2. Toolchain + temporary tools (as lfs; resume from step N with: … <N>)
-bash $FT_DIR/scripts/02_build/01_run_compiler_toolchain.sh
-bash $FT_DIR/scripts/02_build/02_run_temporary_tools.sh
+# 3_chroot — root on the host (ch. 7.2–7.4)
+sudo bash build/3_chroot/01_chown_root.sh       # once
+sudo bash build/3_chroot/02_enter_chroot.sh     # every time you (re)enter
 
-# 3. Enter chroot (root on host), then build the rest inside it
-sudo bash scripts/02_build/03_enter_chroot.sh
-bash /sources/ft_linux/scripts/02_build/04_run_chroot_tools.sh      # inside chroot
-bash /sources/ft_linux/scripts/02_build/05_run_final_system.sh      # inside chroot
-bash /sources/ft_linux/scripts/02_build/06_run_system_config.sh   # inside chroot: ch. 9-10 (bootscripts, /etc, kernel, GRUB) + network (CA certs, wget, dhcpcd)
+# 4..7 — root inside the chroot
+bash $FT_DIR/build/4_chroot_tools/run.sh        # ch. 7.5–7.13
+bash $FT_DIR/build/5_final_system/run.sh        # ch. 8, unattended (hours)
+bash $FT_DIR/build/6_boot/run.sh                # ch. 9–10: bootscripts, /etc, kernel, GRUB, root password
+bash $FT_DIR/build/7_network/run.sh             # BLFS: CA certificates, wget, dhcpcd
 ```
 
-Details of every step (what the scripts do and why) are in
-[notes/steps/build/10_system_config.md](notes/steps/build/10_system_config.md)
-and [11_kernel_bootloader.md](notes/steps/build/11_kernel_bootloader.md).
+What every phase does and why: [docs/](docs/README.md), one page per folder of `build/`.
 
 ## 🧪 Evaluation
 
-The disk image's SHA checksum is in [checksum.txt](checksum.txt). Generated with:
-
-```bash
-shasum < disk.vdi > checksum.txt
-```
-
-The `.vdi` itself is shared out-of-band for peer evaluation.
+The disk image is not in git: `ft_linux.vdi.xz` is attached to the GitHub
+Release, and its SHA-1 (`shasum < ft_linux.vdi`, uncompressed) is in
+[checksum.txt](checksum.txt). The full procedure — verify the checksum, create
+the VM (no sudo), ssh in, show the requirements — is in
+**[eval/README.md](eval/README.md)**.
 
 ## 📁 Project Structure
 
@@ -68,24 +78,21 @@ The `.vdi` itself is shared out-of-band for peer evaluation.
 ft_linux/
 ├── README.md           # this file — quick-start + project card
 ├── checksum.txt        # SHA of the final disk image (for peer evaluation)
-├── wget-list-sysv      # pinned list of every upstream source URL
 ├── config/             # ft_linux.conf (login, versions, paths, disk), kernel.config (kconfig fragment),
 │                       #   extra-sources.list (eudev, check, BLFS network tarballs + md5)
-├── scripts/
-│   ├── lib/common.sh   # loads config/ft_linux.conf (sourced by the scripts)
+├── eval/               # EVALUATION (school PC, no sudo): verify checksum, create the VM, ft_check
+├── build/              # BUILD (host with sudo): one folder per phase, run in numeric order
+│   ├── lib/            # common.sh (config + who/where guards), disk.sh, steps.sh (step runner + logs)
 │   ├── lfs_disk.sh     # mount | umount | detach | status of the LFS disk/image
-│   ├── sync_to_lfs.sh  # copies scripts/ + config/ to $LFS/sources/ft_linux (lfs user + chroot)
-│   ├── 01_setup/       # host prep + version check, partitioning, env, source download
-│   ├── 02_build/       # toolchain → temporary tools → chroot → final system → 06 system config
-│   └── 03_system/      # ch. 9-10: bootscripts, /etc, kernel, GRUB; BLFS: make-ca, wget, dhcpcd
-│       ├── compiler-toolchain/   temporary-tools/
-│       ├── chroot-tools/         final-system/
-│       └── 0{1..6}_run_*.sh      # per-phase orchestrators
-├── notes/              # step-by-step guides, cheatsheet, known issues
-│   ├── steps/setup/    notes/steps/build/
-│   ├── cheatsheet.md   issues.md   sources/sources.md
-└── docs/
-    └── DOCUMENTATION.md  # full conceptual walkthrough
+│   ├── sync_to_lfs.sh  # copies build/ + config/ to $LFS/sources/ft_linux (lfs user + chroot)
+│   ├── 1_host/         # [root, host]   host prep, version check, disk, sources, lfs user (ch. 2–4)
+│   ├── 2_toolchain/    # [lfs, host]    run.sh: 5.xx cross-toolchain, 6.xx temporary tools
+│   ├── 3_chroot/       # [root, host]   01 chown to root (once), 02 mount + enter chroot (ch. 7.2–7.4)
+│   ├── 4_chroot_tools/ # [root, chroot] run.sh: 7.05–7.13 dirs, files, extra temporary tools
+│   ├── 5_final_system/ # [root, chroot] run.sh: 8.03–8.82, file name = book section
+│   ├── 6_boot/         # [root, chroot] run.sh: bootscripts, /etc, kernel, GRUB (ch. 9–10)
+│   └── 7_network/      # [root, chroot] run.sh: libtasn1, p11-kit, make-ca, wget, dhcpcd (BLFS)
+└── docs/               # concepts, one page per build phase, packages, cheatsheet, issues
 ```
 
 ## 🔧 Implementation
@@ -125,12 +132,12 @@ ft_linux/
 
 ## 🔗 References
 
-- [Full project documentation](docs/DOCUMENTATION.md) — concepts explained end to end
+- [Documentation](docs/README.md) — concepts, phases, packages
 - [Linux From Scratch (LFS)](https://www.linuxfromscratch.org/)
 - [Filesystem Hierarchy Standard](https://refspecs.linuxfoundation.org/fhs.shtml)
 - [Software-Building HOWTO](https://tldp.org/HOWTO/Software-Building-HOWTO.html)
 - [kernel.org](https://www.kernel.org/)
-- [notes/cheatsheet.md](notes/cheatsheet.md), [notes/issues.md](notes/issues.md)
+- [docs/cheatsheet.md](docs/cheatsheet.md), [docs/issues.md](docs/issues.md)
 
 ---
 

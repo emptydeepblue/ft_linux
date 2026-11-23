@@ -23,3 +23,6 @@ sources/
 
 # Machine-specific config overrides
 config/ft_linux.local.conf
+
+# Build logs (written by build/lib/steps.sh when run from a repo checkout)
+logs/

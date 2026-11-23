@@ -1,0 +1,25 @@
+#!/bin/bash
+# LFS 12.4 §6.6 — Diffutils
+# File comparison utilities (diff, cmp, etc.).
+# Cross-compiled and installed to $LFS.
+# Run as lfs user.
+set -euo pipefail
+
+echo ">>> Diffutils"
+
+cd "$LFS/sources"
+tar -xf diffutils-*.tar.xz
+cd diffutils-*/
+
+./configure --prefix=/usr                       \
+            --host=$LFS_TGT                     \
+            gl_cv_func_strcasecmp_works=y       \
+            --build=$(./build-aux/config.guess)
+
+make
+make DESTDIR=$LFS install
+
+cd "$LFS/sources"
+rm -rf diffutils-*/
+
+echo "<<< Diffutils done"
