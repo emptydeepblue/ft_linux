@@ -15,9 +15,10 @@ VirtualBox). Nothing needs to be built: the finished system is the disk image
 
 ```bash
 cd ~/goinfre                       # the home quota is too small for a VM
-wget <release URL>/ft_linux.vdi.xz # or copy it from a USB drive (exFAT: file > 4 GB)
+wget https://github.com/emptydeepblue/ft_linux/releases/download/v1.0.0/ft_linux.vdi.xz
+                                   # or copy it from a USB drive (exFAT: file > 4 GB)
 xz -dk ft_linux.vdi.xz             # -> ft_linux.vdi (keeps the .xz)
-git clone <repo URL> ft_linux-repo
+git clone https://github.com/emptydeepblue/ft_linux.git ft_linux-repo
 ```
 
 ## 2. Verify it is the submitted image
