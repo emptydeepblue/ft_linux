@@ -16,6 +16,28 @@ program interpreter: /lib64/ld-linux-x86-64.so.2]', expected
 Glibc had been fully installed (the check is its last step), so the build
 resumed at 5.6.
 
+### 0d. Libelf: "No rule to make target '../lib/libeu.a'" (2026-11-24)
+**Problem**: `8.49_libelf.sh` ran `make -C libelf`, but libelf links the helper
+library `lib/libeu.a`, which is only built by the top-level `make`.
+**Solution**: as in the book: `make` (whole Elfutils), then `make -C libelf install`.
+Resumed with `run.sh 8.49`.
+
+### 0e. "root already has a password" but none was ever set (2026-11-24)
+**Problem**: `06_root_password.sh` trusted `passwd -S root` = `P`. After `pwconv`
+the shadow field of root is a bare `x` (copied from `/etc/passwd`): `passwd -S`
+calls it a password, but nothing can match it, so root could never log in.
+**Solution**: the step now checks `/etc/shadow` for a real hash (`$id$…`).
+The prompt also says to answer `y`/`n`, not the password.
+
+### 0f. The checksum changed although the disk was immutable (2026-11-26)
+**Problem**: after the VirtualBox test, `shasum < ft_linux.vdi` no longer matched
+`checksum.txt`. `cmp` showed only 2 bytes changed, both in the VDI header:
+VirtualBox upgrades the header written by `qemu-img` the first time it opens it
+(`cbHeader` 384 → 400, LCHS `cbSector` 0 → 512), immutable or not. The data
+blocks were identical: the boot's writes went to the differencing disk.
+**Solution**: `03_make_vdi.sh` writes those two fields itself, before the
+checksum. Same SHA-1 as the copy VirtualBox had touched; `qemu-img check` OK.
+
 ### 0c. Resuming after a failure: leftover source directory
 **Problem**: a failed step leaves `$LFS/sources/<package>-<version>/` behind;
 re-running it then stops at `mkdir build` ("File exists").

@@ -9,7 +9,7 @@ cd elfutils-*/
 ./configure --prefix=/usr                \
             --disable-debuginfod         \
             --enable-libdebuginfod=dummy
-make -C libelf
+make                          # book: build everything (libelf links lib/libeu.a)
 make -C libelf install
 install -vm644 config/libelf.pc /usr/lib/pkgconfig
 rm -fv /usr/lib/libelf.a

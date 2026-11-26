@@ -1,12 +1,1 @@
-# ft_linux — disk image checksum
-#
-# The bootable VM disk image (ft_linux.vdi) is shared out-of-band for peer
-# evaluation; it is not committed to this repository. Paste its checksum below
-# so an evaluator can verify the image they received is the one that was built.
-#
-# Generate it (with the VM powered off) using:
-#   shasum < ft_linux.vdi
-#   # or: md5sum ft_linux.vdi
-#
-# Replace the line below with the real hash before submission:
-# <checksum_hash>  -
+7eb629010f6278c8f99aefe9353738675e4fe19b  -

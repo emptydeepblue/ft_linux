@@ -2,7 +2,7 @@
 
 **Book:** LFS 12.4 ch. 9–10, BLFS 12.4 · **Folders:** [`build/6_boot/`](../../build/6_boot/),
 [`build/7_network/`](../../build/7_network/) · **Who/where:** root inside the chroot ·
-**Status:** reviewed against the books
+**Status:** reviewed against the books, built (2026-11-25)
 
 ```bash
 bash $FT_DIR/build/6_boot/run.sh       # bootscripts, /etc, kernel, GRUB, ft_check, root password

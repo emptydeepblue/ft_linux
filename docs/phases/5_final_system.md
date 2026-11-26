@@ -1,7 +1,7 @@
 # Phase 5 — The final system
 
 **Book:** LFS 12.4 ch. 8 · **Folder:** [`build/5_final_system/`](../../build/5_final_system/) ·
-**Who/where:** root inside the chroot · **Status:** reviewed against the book (all of ch. 8)
+**Who/where:** root inside the chroot · **Status:** reviewed against the book (all of ch. 8), built (2026-11-25)
 
 ```bash
 bash $FT_DIR/build/5_final_system/run.sh          # all of ch. 8, unattended (hours)

@@ -1,7 +1,7 @@
 # Phase 1 — Host, disk, sources, lfs user
 
 **Book:** LFS 12.4 ch. 2–4 · **Folder:** [`build/1_host/`](../../build/1_host/) ·
-**Who/where:** root on the host, one script at a time · **Status:** reviewed against the book
+**Who/where:** root on the host, one script at a time · **Status:** reviewed against the book, built (2026-11-25)
 
 LFS needs an existing Linux, the **host**, whose compiler builds the first
 toolchain. Here it is WSL2 with Ubuntu 22.04, the same OS as the school PCs.

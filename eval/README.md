@@ -45,6 +45,9 @@ The settings it applies (same as creating the VM by hand in VirtualBox):
 | Hardware clock | UTC | ft_linux keeps its clock in UTC (`/etc/sysconfig/clock`) |
 | RAM / CPUs | 2 GB / 2 | |
 
+The image's header is already in the form VirtualBox writes, so attaching it
+does not change the file either: step 2 gives the same result before and after.
+
 **Immutable** means anything done inside the VM (e.g. an installed package)
 lasts until the VM is powered off. That is enough for the defense, and the
 image can be re-verified at any moment with step 2.
@@ -61,6 +64,10 @@ ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@loc
 The two `-o` options: the image ships no SSH host key (it is public), so
 ft_linux creates new ones at boot, and with an immutable disk that happens at
 every start. Without them `ssh` would refuse the "changed" key.
+
+Home test with VirtualBox on Windows (`VBOXMANAGE=…/VBoxManage.exe` from
+WSL): the forwarded port is on *Windows'* `127.0.0.1`, which WSL2 cannot
+reach ("Connection refused"). Run the same `ssh` from PowerShell.
 
 Root password: *given at the defense*.
 

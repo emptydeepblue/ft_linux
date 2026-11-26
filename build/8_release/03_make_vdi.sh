@@ -4,8 +4,9 @@
 # Who/where: root on the HOST, image detached (sudo bash build/lfs_disk.sh detach),
 # after 02_prepare_image.sh.
 #
-#   ft_linux.vdi      dynamic VDI; qemu-img does not write zero blocks, so it
-#                     is already "compacted" (no VBoxManage --compact needed)
+#   ft_linux.vdi      dynamic VDI, header already in VirtualBox form; qemu-img
+#                     does not write zero blocks, so it is already "compacted"
+#                     (no VBoxManage --compact needed)
 #   checksum.txt      shasum < ft_linux.vdi   (the subject's command), in the repo
 #   ft_linux.vdi.xz   the same file compressed, to upload as a Release asset
 #
@@ -29,6 +30,14 @@ mkdir -p "$OUT"
 
 echo "[1/3] $LFS_IMAGE -> $VDI"
 qemu-img convert -p -f raw -O vdi "$LFS_IMAGE" "$VDI"
+
+# VirtualBox rewrites the header of a qemu-img VDI the first time it opens it,
+# even attached immutable: cbHeader 384 -> 400 and LCHS cbSector 0 -> 512
+# (offsets 72 and 468, little-endian; the data blocks are untouched).
+# Write the same two fields now, so attaching the disk never changes its SHA-1.
+printf '\x90\x01\x00\x00' | dd of="$VDI" bs=1 seek=72  conv=notrunc status=none
+printf '\x00\x02\x00\x00' | dd of="$VDI" bs=1 seek=468 conv=notrunc status=none
+qemu-img check -q -f vdi "$VDI" || ft_die "$VDI: header patch broke the image"
 
 echo "[2/3] Checksum (shasum < ft_linux.vdi) -> $FT_ROOT/checksum.txt"
 ( cd "$OUT" && shasum < ft_linux.vdi ) | tee "$FT_ROOT/checksum.txt"

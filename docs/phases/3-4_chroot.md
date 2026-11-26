@@ -1,7 +1,7 @@
 # Phases 3–4 — Entering the chroot, last temporary tools
 
 **Book:** LFS 12.4 ch. 7 · **Folders:** [`build/3_chroot/`](../../build/3_chroot/),
-[`build/4_chroot_tools/`](../../build/4_chroot_tools/) · **Status:** reviewed against the book
+[`build/4_chroot_tools/`](../../build/4_chroot_tools/) · **Status:** reviewed against the book, built (2026-11-25)
 
 | Phase | Who/where | |
 |---|---|---|
@@ -61,7 +61,9 @@ it would fail here, not later on the finished system.
   (with exceptions to avoid breaking `as`) and deleted `include-fixed` through
   a path wrong for GCC 15. Now it does exactly what §7.13 says.
 - **§7.5:** `/usr/lib/locale` was missing (Glibc installs locales there in ch. 8).
-- **§7.6:** an extra group `sgx:x:101` that 12.4 does not have.
+- **§7.6:** an extra group `sgx:x:101` that 12.4 does not have. Removed, so at
+  boot udevd prints `specified group 'sgx' unknown`: Eudev's rule for the Intel
+  SGX device (`/dev/sgx_enclave`, absent in a VM). Harmless, kept as in the book.
 - **§7.2:** limited to the book's directories (+ `sources`); `TESTSUITEFLAGS` set like §7.4.
 - Options of every package and the directory list were compared with the book
   automatically: no differences left.

@@ -1,7 +1,7 @@
 # Phase 8 — From the raw image to the evaluation disk
 
 **Folder:** [`build/8_release/`](../../build/8_release/) · **Who/where:** on the host,
-after the chroot is exited · **Status:** written, not run yet
+after the chroot is exited · **Status:** done (2026-11-25), header fix 2026-11-26
 
 The build produced `/var/lib/ft_linux/ft_linux.img`, a raw disk image. This
 phase checks that it boots on hardware like the school VM's, makes it small,
@@ -23,13 +23,19 @@ sudo bash build/8_release/03_make_vdi.sh
 |---|---|---|
 | `01_boot_test.sh` | user (group kvm) | Boots the image in QEMU with the school VM's hardware: BIOS, SATA/AHCI, e1000 + NAT, ssh on `127.0.0.1:2222`, UTC clock. **`-snapshot`**: the image is not modified. **`-cpu qemu64`**: a plain x86-64 CPU instead of this PC's, so anything built for the build machine's CPU fails here (*Illegal instruction*), not at school. Then run `ft_check` inside. |
 | `02_prepare_image.sh` | root | Copies the build logs into the repo (`logs/`, git-ignored); removes `/sources`; `make clean` in `/usr/src/kernel-6.16.1` (sources and `.config` stay, as the subject wants; object files go); empties `/tmp`; fills the free space with zeros and deletes it. Asks for confirmation. |
-| `03_make_vdi.sh` | root | `qemu-img convert` → `ft_linux.vdi` (dynamic). Zero blocks are not written, so the file is already compact. Writes **`checksum.txt`** with the subject's command (`shasum < ft_linux.vdi`) and a compressed copy `ft_linux.vdi.xz` for the GitHub Release. |
+| `03_make_vdi.sh` | root | `qemu-img convert` → `ft_linux.vdi` (dynamic). Zero blocks are not written, so the file is already compact. Rewrites two header fields the way VirtualBox would (see below). Writes **`checksum.txt`** with the subject's command (`shasum < ft_linux.vdi`) and a compressed copy `ft_linux.vdi.xz` for the GitHub Release. |
 
 ## The checksum must stay valid
 
 Booting a `.vdi` attached normally changes it, and the checksum with it. So
 after `03_make_vdi.sh` the file is only ever attached **immutable** — which
 [`eval/02_create_vm.sh`](../../eval/02_create_vm.sh) does — at home and at school.
+
+Immutable is not quite enough: the first time VirtualBox opens a VDI made by
+`qemu-img`, it rewrites 2 bytes of its header (header size and sector size),
+so the hash changed as soon as the disk was attached. `03_make_vdi.sh` writes
+those fields itself, and VirtualBox then has nothing to change
+([issues.md, 0f](../issues.md)).
 
 ## Final test in VirtualBox (Windows, at home)
 

@@ -1,7 +1,7 @@
 # Phase 2 — Cross-toolchain and temporary tools
 
 **Book:** LFS 12.4 ch. 5–6 · **Folder:** [`build/2_toolchain/`](../../build/2_toolchain/) ·
-**Who/where:** user `lfs` on the host · **Status:** reviewed against the book
+**Who/where:** user `lfs` on the host · **Status:** reviewed against the book, built (2026-11-25)
 
 ```bash
 sudo su - lfs

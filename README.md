@@ -3,7 +3,7 @@
 Build a minimal but functional Linux distribution from source — kernel, toolchain, init system, and userspace — following the Linux From Scratch (LFS) methodology.
 
 **Specialization:** Unix/Kernel
-**XP:** 4,200 · **People:** 1 · **Status:** 🟨 In progress (scripts written, full build not yet run)
+**XP:** 4,200 · **People:** 1 · **Status:** ✅ Built and tested (QEMU + VirtualBox 7.2), ready for evaluation
 
 > 📖 **New here?** Read [docs/concepts.md](docs/concepts.md) — a full
 > walkthrough of the project and every concept behind it (toolchain bootstrapping,
@@ -78,6 +78,29 @@ Release, and its SHA-1 (`shasum < ft_linux.vdi`, uncompressed) is in
 the VM (no sudo), ssh in, show the requirements — is in
 **[eval/README.md](eval/README.md)**.
 
+### Evaluation setup (VirtualBox)
+
+[`eval/02_create_vm.sh`](eval/02_create_vm.sh) applies these settings; to
+create the VM by hand, use the same:
+
+| Setting | Value |
+|---|---|
+| Type | Linux, Other Linux (64-bit) |
+| Firmware | **BIOS** (EFI off) |
+| Storage | **SATA (AHCI)**, port 0 → `/dev/sda` |
+| Disk | `ft_linux.vdi`, type **Immutable** (the checksum never changes) |
+| Network | **NAT**, Intel PRO/1000 MT Desktop; port forward `127.0.0.1:2222` → `22` |
+| Clock | hardware clock in UTC |
+| RAM / CPUs | 2 GB / 2 |
+
+```bash
+xz -dk ft_linux.vdi.xz
+bash eval/01_verify.sh ft_linux.vdi            # SHA-1 vs checksum.txt
+bash eval/02_create_vm.sh ft_linux.vdi --start
+ssh -p 2222 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@localhost
+ft_check                                       # every requirement of the subject, live
+```
+
 ## 📁 Project Structure
 
 ```
@@ -114,27 +137,33 @@ ft_linux/
 - **Bootloader:** GRUB 2 (BIOS/MBR)
 - **Device manager:** eudev
 
-**Partition layout** (the build disk is `/dev/sdb` on the host; the same disk is
-`/dev/sda` once booted inside the VM):
+**Partition layout** (MBR; built in a raw image on a loop device, `/dev/sda`
+once booted in the VM; fstab and GRUB find the partitions by UUID):
 
 | Mount  | Device     | FS   | Purpose         |
 |--------|------------|------|-----------------|
-| `/boot`| /dev/sda1  | ext4 | Kernel + GRUB   |
-| `/`    | /dev/sda2  | ext4 | Root filesystem |
-| swap   | /dev/sda3  | swap | Swap            |
+| `/boot`| /dev/sda1  | ext4 | Kernel + GRUB (512 MB) |
+| `/`    | /dev/sda2  | ext4 | Root filesystem (27.5 GB) |
+| swap   | /dev/sda3  | swap | Swap (2 GB)     |
 
-**Build pipeline:**
-1. **Compiler toolchain** — host-built cross-binutils + GCC pass 1 targeting the LFS root
-2. **Temporary tools** — minimal userspace built with the cross-toolchain
-3. **Chroot** — switch into the LFS root, rebuild final tools using themselves
-4. **Final system** — full userspace, kernel build, GRUB install
+**Build pipeline** (one folder of `build/` each):
+1. **Host** — prepare Ubuntu, create the disk image, download and check the sources, `lfs` user
+2. **Toolchain** — cross-binutils/GCC/Glibc into `/tools`, then temporary tools built with them
+3. **Chroot** — hand the tree to root, enter it with the virtual filesystems mounted
+4. **Chroot tools** — directories, essential files, the last temporary tools (Perl, Python…)
+5. **Final system** — every package of chapter 8, eudev instead of systemd-udev
+6. **Boot** — bootscripts, `/etc` configuration, kernel `6.16.1-everonel`, GRUB
+7. **Network** (BLFS) — CA certificates, wget, dhcpcd, OpenSSH
+8. **Release** — QEMU boot test, shrink, `ft_linux.vdi` + checksum
+
+Deviations from the book and why: [docs/](docs/README.md).
 
 ## 📚 Learning Objectives
 
-- How a Linux system actually boots (BIOS/UEFI → bootloader → kernel → init → userspace)
+- How a Linux system actually boots (BIOS → GRUB → kernel → SysVinit → bootscripts → login)
 - Cross-compilation and toolchain bootstrapping
 - FHS, package layout, and the role of each base package
-- Kernel configuration and build (`make menuconfig`, modules, initramfs)
+- Kernel configuration and build (defconfig + fragment, built-in drivers, no initramfs)
 - VM disk images, partitioning, GRUB
 
 ## 🔗 References
